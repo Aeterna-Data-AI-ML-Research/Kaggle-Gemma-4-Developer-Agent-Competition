@@ -298,6 +298,10 @@ The guard caused agents to submit patches that were already present in the worki
 
 This is an important evaluation lesson: a proxy metric can move substantially while the actual objective remains unchanged.
 
+![Figure 1: Process Ceremony vs. True Repair Accuracy](docs/figures/fig1_wt_vs_strict.jpg)
+
+*Figure 1: Working-tree pass rate (blue, graded by the host via `git diff`) versus strict submission rate (orange, explicit `submit_patch` calls) across all six evaluated configurations on the 150-task calibration split. While process-level interventions (`P2_A` clock notices and the `1,024`-token thinking cap) shift strict submission compliance by up to +8.6 percentage points, true repair accuracy remains locked inside the 30.3%–33.3% band. Only the non-deployable `pass@6` oracle (44.0%) separates from the baseline.*
+
 ---
 
 ## 8. Thinking-budget intervention: a successful behavioral manipulation with zero accuracy gain
@@ -331,6 +335,10 @@ We therefore ran a full paired experiment rather than testing only the failures:
 | Time-budget endings | 77 | 85 |
 | Submitted endings | 45 | 34 |
 | Episodes with estimated thought >1,024 | 3 | 63 |
+
+![Figure 2: Anatomy of the 420-Second Fatal Turn and the 9-for-9 Cap Trade-off](docs/figures/fig2_fatal_turn_timeline.jpg)
+
+*Figure 2: Timeline anatomy of the 420-second virtual clock across the 150 calibration tasks. Passing rollouts on mixed tasks edit ~59s earlier using shorter reasoning turns (Track 1). In 47 of 52 uncapped empty-diff timeouts, the agent already read the gold file but delayed editing until ~353s, launching a ~1,580-token thought block that expired the clock before `edit_file` could execute (Track 2). Capping thoughts at 1,024 tokens (Track 3) rescues +9 timeout tasks but induces −9 regressions on tasks requiring deep continuous reasoning, yielding a net accuracy delta of 0 tasks (48/150 vs. 48/150).*
 
 The intervention worked exactly as a behavioral control:
 
@@ -374,6 +382,10 @@ The final SFT builder used:
 - attention-locked MLP continuation from the tr20 ForgeSWE lineage.
 
 This was far below the plan's target of at least 1,000 verified rows. The experiment could test training plumbing, but it could not support a strong claim about scalable self-distillation.
+
+![Figure 3: Public Leaderboard Selection Bias and On-Policy Training Funnel](docs/figures/fig3_lb_and_funnel.jpg)
+
+*Figure 3: (Left) Median submission count per team across score brackets on the 58-task public leaderboard (n = 5,940 teams), illustrating best-of-N selection pressure under stochastic sampling (σ ≈ 1.4 tasks). (Right) The on-policy trajectory funnel from 900 Phase 1 calibration episodes: 279 raw passing trajectories collapse to 90 usable SFT rows across 50 unique tasks after removing 150 repeated solves on 25 always-solved tasks and holding out evaluation strata—an order of magnitude below the 1,000+ unique rows needed for reliable 31B self-distillation.*
 
 ---
 

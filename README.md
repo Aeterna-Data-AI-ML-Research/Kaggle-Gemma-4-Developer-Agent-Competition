@@ -26,6 +26,26 @@ analysis, not at replaying private competition ops.
 
 Read the full narrative in [`PAPER.md`](PAPER.md).
 
+## Figures
+
+| Fig | File | What it shows |
+| ---: | --- | --- |
+| 1 | [`docs/figures/fig1_wt_vs_strict.jpg`](docs/figures/fig1_wt_vs_strict.jpg) | WT vs strict pass across configs + pass@6 oracle |
+| 2 | [`docs/figures/fig2_fatal_turn_timeline.jpg`](docs/figures/fig2_fatal_turn_timeline.jpg) | 420 s fatal-turn timeline and 9-for-9 think-cap trade-off |
+| 3 | [`docs/figures/fig3_lb_and_funnel.jpg`](docs/figures/fig3_lb_and_funnel.jpg) | Public LB submission bias + on-policy SFT funnel |
+
+<p align="center">
+  <img src="docs/figures/fig1_wt_vs_strict.jpg" alt="Figure 1: Process ceremony vs true repair accuracy" width="100%" />
+</p>
+
+<p align="center">
+  <img src="docs/figures/fig2_fatal_turn_timeline.jpg" alt="Figure 2: Anatomy of the 420-second fatal turn" width="100%" />
+</p>
+
+<p align="center">
+  <img src="docs/figures/fig3_lb_and_funnel.jpg" alt="Figure 3: Public LB selection bias and on-policy training funnel" width="100%" />
+</p>
+
 ## One-command reproduce
 
 ```bash
@@ -46,7 +66,7 @@ PAPER.md Sections 4–8 (≈1–2 s on a laptop CPU).
 benchmark/     tasks_manifest.jsonl + PROTOCOL.md
 evidence/      phase1/2/3 compact JSONL + SCHEMA.md
 configs/       stripped D69-shaped declarative baseline (no proprietary prompts)
-docs/figures/  hero art + study infographic
+docs/figures/  hero art + Figures 1–3 (WT/strict, fatal turn, LB/funnel)
 scripts/       reproduce_all_tables.py, plot_figures.py, build_compact_evidence.py
 reports/       appendices + RESEARCH ticket map
 PAPER.md       retrospective article
