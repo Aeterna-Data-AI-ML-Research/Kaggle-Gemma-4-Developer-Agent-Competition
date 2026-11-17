@@ -1,0 +1,10 @@
+public_score,implied_solved,public_tasks,note
+0.06,4,58,inferred from two-decimal truncation lattice
+0.10,6,58,inferred from two-decimal truncation lattice
+0.13,8,58,inferred from two-decimal truncation lattice
+0.17,10,58,inferred from two-decimal truncation lattice
+0.18,11,58,stable unadapted 31B floor in this study
+0.20,12,58,inferred from two-decimal truncation lattice
+0.22,13,58,inferred from two-decimal truncation lattice
+0.24,14,58,inferred from two-decimal truncation lattice
+0.29,17,58,top of public LB snapshot during study

@@ -7,8 +7,9 @@ Gemma 4 Developer Agent Competition.
 **License:** Apache-2.0  
 **Kaggle:** [Google — The Gemma 4 Developer Agent Competition](https://www.kaggle.com/competitions/gemma-4-developer-agent)  
 **Article:** [`PAPER.md`](PAPER.md) · [GitHub Pages (one-page article)](https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/)  
-**Notebooks:** [`notebooks/`](notebooks/) · [Reproduce](https://www.kaggle.com/code/moranzavdi/reproduce-gemma4-agent-behavior-study) · [Explore](https://www.kaggle.com/code/moranzavdi/explore-gemma4-agent-calibration)  
+**Notebooks:** [`notebooks/`](notebooks/) · [Reproduce](https://www.kaggle.com/code/moranzavdi/reproduce-gemma4-agent-behavior-study) · [Explore](https://www.kaggle.com/code/moranzavdi/explore-gemma4-agent-calibration) · [Lessons](https://www.kaggle.com/code/moranzavdi/gemma4-agent-lessons-for-competitors)  
 **Dataset:** [moranzavdi/gemma4-agent-behavior-vs-accuracy](https://www.kaggle.com/datasets/moranzavdi/gemma4-agent-behavior-vs-accuracy)  
+**Medium:** https://medium.com/@when1go2market  
 **Evidence cutoff:** 2026-11-17
 
 <p align="center">
@@ -81,16 +82,38 @@ Pins every table in [`PAPER.md`](PAPER.md) Sections 4–8 against
 
 Full definitions are in [`PAPER.md` §3](PAPER.md#terminology-and-configuration-glossary).
 
-## Notebooks (start here)
+## Public Kaggle assets (start here)
+
+Curated for other competitors and DS readers. Everything below is **public** and Apache-2.0 where we own the files.
+
+### Agent-track (this study)
+
+| Asset | Why it helps | Link |
+| --- | --- | --- |
+| **Dataset** — 1,350 compact episodes + scripts + lattice + configs | Reproduce every PAPER table; inspect WT vs process metrics | [gemma4-agent-behavior-vs-accuracy](https://www.kaggle.com/datasets/moranzavdi/gemma4-agent-behavior-vs-accuracy) |
+| **Notebook** — pin tables | Fail-closed CI gate for §§4–8 | [reproduce-gemma4-agent-behavior-study](https://www.kaggle.com/code/moranzavdi/reproduce-gemma4-agent-behavior-study) |
+| **Notebook** — explore calibration | Episode EDA (WT, submits, gold-file opens, Think-1024) | [explore-gemma4-agent-calibration](https://www.kaggle.com/code/moranzavdi/explore-gemma4-agent-calibration) |
+| **Notebook** — competitor lessons | LB lattice, Think-1024 trap, timeout localization lesson | [gemma4-agent-lessons-for-competitors](https://www.kaggle.com/code/moranzavdi/gemma4-agent-lessons-for-competitors) |
+| Cheatsheet in-repo | Same lessons offline | [`reports/LESSONS_FOR_COMPETITORS.md`](reports/LESSONS_FOR_COMPETITORS.md) · [`reports/lb_lattice.csv`](reports/lb_lattice.csv) |
+
+### Paper-track (related)
+
+| Asset | Why it helps | Link |
+| --- | --- | --- |
+| Soundness / Punica evidence dataset | Host vs local validation claims + toolkit | [gemma4-soundness-and-punica-bench](https://www.kaggle.com/datasets/moranzavdi/gemma4-soundness-and-punica-bench) |
+| Reproduce notebook | Recomputes paper-track numbers end-to-end | [from-local-validation-to-live-evaluation](https://www.kaggle.com/code/moranzavdi/from-local-validation-to-live-evaluation) |
+
+### Intentionally *not* uploaded
+
+Private smoke/train kernels, adapter weights, submission zips, proprietary prompt grafts, sealed-test trajectories, and overnight ops dumps. Those do not help fair public measurement and would either leak competition IP or create misleading “copy this pack” shortcuts.
+
+## Notebooks (in git)
 
 | Notebook | What it does | Kaggle |
 | --- | --- | --- |
-| [`notebooks/01_reproduce_tables.ipynb`](notebooks/01_reproduce_tables.ipynb) | Pins PAPER.md §§4–8 against `evidence/*.jsonl` | [reproduce-gemma4-agent-behavior-study](https://www.kaggle.com/code/moranzavdi/reproduce-gemma4-agent-behavior-study) |
-| [`notebooks/02_explore_calibration.ipynb`](notebooks/02_explore_calibration.ipynb) | Episode EDA (WT, submits, gold-file opens, Think-1024) | [explore-gemma4-agent-calibration](https://www.kaggle.com/code/moranzavdi/explore-gemma4-agent-calibration) |
-
-Public dataset with the same evidence + scripts: [gemma4-agent-behavior-vs-accuracy](https://www.kaggle.com/datasets/moranzavdi/gemma4-agent-behavior-vs-accuracy).
-
-**Also used (paper track):** [gemma4-soundness-and-punica-bench](https://www.kaggle.com/datasets/moranzavdi/gemma4-soundness-and-punica-bench) · [from-local-validation-to-live-evaluation](https://www.kaggle.com/code/moranzavdi/from-local-validation-to-live-evaluation)
+| [`notebooks/01_reproduce_tables.ipynb`](notebooks/01_reproduce_tables.ipynb) | Pins PAPER.md §§4–8 against `evidence/*.jsonl` | [reproduce…](https://www.kaggle.com/code/moranzavdi/reproduce-gemma4-agent-behavior-study) |
+| [`notebooks/02_explore_calibration.ipynb`](notebooks/02_explore_calibration.ipynb) | Episode EDA | [explore…](https://www.kaggle.com/code/moranzavdi/explore-gemma4-agent-calibration) |
+| [`notebooks/03_lessons_for_competitors.ipynb`](notebooks/03_lessons_for_competitors.ipynb) | Competitor field guide over the public dataset | [lessons…](https://www.kaggle.com/code/moranzavdi/gemma4-agent-lessons-for-competitors) |
 
 ## Layout
 

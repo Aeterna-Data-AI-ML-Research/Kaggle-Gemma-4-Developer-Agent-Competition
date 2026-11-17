@@ -38,7 +38,16 @@ llms.txt
 notebooks/README.md
 notebooks/01_reproduce_tables.ipynb
 notebooks/02_explore_calibration.ipynb
+notebooks/03_lessons_for_competitors.ipynb
 notebooks/kaggle/dataset-metadata.json
+reports/LESSONS_FOR_COMPETITORS.md
+reports/lb_lattice.csv
+reports/lb_lattice.md
+reports/timeout_forensics.md
+reports/RESEARCH.md
+figures/fig1_phase1_wt_rates.png
+figures/fig2_thoughts_over_1024.png
+figures/fig3_phase3_paired.png
 scripts/build_pages.py
 scripts/build_compact_evidence.py
 scripts/reproduce_all_tables.py

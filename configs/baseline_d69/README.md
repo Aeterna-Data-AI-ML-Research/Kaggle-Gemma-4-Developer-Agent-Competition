@@ -17,6 +17,6 @@ Host model (not redistributed here): `gemma-4-31b-it-qat-w4a16-ct`.
 Phase-3 overlay: set `thinking_budget: 1024` in `sampling.yaml` (see
 `../think1024_overlay.yaml`).
 
-**Kaggle note:** Until the competition finals close (2026-12-02), keep this
-repository Private or share the URL on the public Discussion board if you
-publish earlier.
+**Kaggle note:** Companion public dataset —
+[moranzavdi/gemma4-agent-behavior-vs-accuracy](https://www.kaggle.com/datasets/moranzavdi/gemma4-agent-behavior-vs-accuracy).
+This folder is a **shape reference only** (no proprietary prompts / adapters).
