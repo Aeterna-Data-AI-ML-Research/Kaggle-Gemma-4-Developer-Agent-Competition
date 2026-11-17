@@ -6,6 +6,14 @@ analysis, not at replaying private competition ops.
 
 **License:** Apache-2.0
 
+<p align="center">
+  <img src="docs/figures/hero_evidence_first_study.jpg" alt="When better agent behavior does not improve accuracy — evidence-first study summary" width="100%" />
+</p>
+
+<p align="center">
+  <img src="docs/figures/hero_agent_workbench.jpg" alt="Autonomous code-repair agent at the workbench" width="100%" />
+</p>
+
 ## Key findings (calib, 150 tasks)
 
 1. Three configs with different Kaggle scores (`d69` 0.18, `tr20` 0.17, `scale10` 0.13)
@@ -22,10 +30,10 @@ Read the full narrative in [`PAPER.md`](PAPER.md).
 
 ```bash
 git clone https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition.git
-cd gemma4-swe-agent-study
+cd Kaggle-Gemma-4-Developer-Agent-Competition
 pip install -r requirements.txt
 python scripts/reproduce_all_tables.py
-python scripts/plot_figures.py   # optional figures → figures/
+python scripts/plot_figures.py   # optional matplotlib figures → figures/
 ```
 
 `reproduce_all_tables.py` verifies `evidence/manifest.sha256`, loads 1,350 compact
@@ -38,6 +46,7 @@ PAPER.md Sections 4–8 (≈1–2 s on a laptop CPU).
 benchmark/     tasks_manifest.jsonl + PROTOCOL.md
 evidence/      phase1/2/3 compact JSONL + SCHEMA.md
 configs/       stripped D69-shaped declarative baseline (no proprietary prompts)
+docs/figures/  hero art + study infographic
 scripts/       reproduce_all_tables.py, plot_figures.py, build_compact_evidence.py
 reports/       appendices + RESEARCH ticket map
 PAPER.md       retrospective article

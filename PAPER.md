@@ -7,6 +7,8 @@ license: Apache-2.0
 
 ## An evidence-first retrospective on building and evaluating a code-repair agent for the Gemma 4 Developer Agent Competition
 
+![Autonomous code-repair agent at the workbench](docs/figures/hero_agent_workbench.jpg)
+
 **Status:** publication-ready technical article draft  
 **Evidence cutoff:** 2026-11-17  
 **Scope:** 31B main track, E4B small-model track, the final 1,350-episode calibration campaign, and relevant Kaggle submissions  
@@ -23,6 +25,10 @@ To address this, we built a 300-task evaluation pool, froze a 150-task calibrati
 First, three configurations with materially different Kaggle scores were statistically indistinguishable offline: working-tree pass rates ranged from 30.3% to 32.0%, and every paired confidence interval included zero. Second, an oracle over six rollouts raised the solve rate from roughly 31% to 44%, showing substantial stochastic headroom but no deployable selection mechanism. Third, most clock-killed episodes had already found the relevant file; failures were dominated by late editing, long reasoning bursts, incomplete fixes, and weak patch construction rather than simple localization. Fourth, reducing the thinking budget from 4,096 to 1,024 tokens successfully changed behavior—long thoughts nearly disappeared and more episodes submitted patches—but did not improve accuracy: both capped and uncapped runs solved exactly 48 of 150 tasks.
 
 The public leaderboard told the same story. Our stable unadapted 31B agent scored 0.18, while every trained or heavily modified configuration scored 0.17 or below. The final decision was therefore to stop GPU spending and retain the stable 0.18 submission. The broader lesson is that agentic software engineering requires evaluation at the task level, paired controls, and explicit separation of behavioral improvements from capability improvements.
+
+![Evidence-first study summary: virtual-clock funnel, paired bootstrap intervals, and pass-rate charts](docs/figures/hero_evidence_first_study.jpg)
+
+*Figure — Campaign summary. A 420 s virtual clock and paired bootstraps show that scaffold and thinking-budget changes can move behavior (strict submits, long thoughts) without moving working-tree accuracy; oracle pass@6 remains near 44%.*
 
 ---
 
