@@ -5,7 +5,7 @@ Gemma 4 Developer Agent Competition.
 
 **Author:** Moran Zavdi  
 **License:** Apache-2.0  
-**Full Article:** (When Better Agent Behavior Does Not Improve Accuracy)(https://medium.com/meetcyber/when-better-agent-behavior-does-not-improve-accuracy-94b673a05bc3)
+**Full Article:** [When Better Agent Behavior Does Not Improve Accuracy](https://medium.com/meetcyber/when-better-agent-behavior-does-not-improve-accuracy-94b673a05bc3)
 **Kaggle:** [Google — The Gemma 4 Developer Agent Competition](https://www.kaggle.com/competitions/gemma-4-developer-agent)  
 **Article:** [`PAPER.md`](PAPER.md) · [GitHub Pages (one-page article)](https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/)  
 **Notebooks:** [`notebooks/`](notebooks/) · [Reproduce](https://www.kaggle.com/code/moranzavdi/reproduce-gemma4-agent-behavior-study) · [Explore](https://www.kaggle.com/code/moranzavdi/explore-gemma4-agent-calibration) · [Lessons](https://www.kaggle.com/code/moranzavdi/gemma4-agent-lessons-for-competitors)  
