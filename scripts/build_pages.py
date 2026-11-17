@@ -301,8 +301,29 @@ def main() -> int:
     ul, ol {{ padding-left: 1.3rem; }}
     li {{ margin: 0.25rem 0; }}
     hr {{ border: 0; border-top: 1px solid var(--border); margin: 2rem 0; }}
+    .resources {{
+      margin-top: 2.5rem;
+      padding: 1.25rem 1.25rem 0.5rem;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }}
+    .resources h2 {{
+      margin-top: 0;
+      border-bottom: none;
+      font-size: 1.15rem;
+    }}
+    .resources ul {{
+      padding-left: 1.2rem;
+      margin: 0.5rem 0 1rem;
+    }}
+    .resources li {{
+      margin: 0.45rem 0;
+      font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+      font-size: 0.95rem;
+    }}
     .credit {{
-      margin-top: 3rem;
+      margin-top: 2rem;
       padding-top: 1rem;
       border-top: 1px solid var(--border);
       font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", system-ui, sans-serif;
@@ -339,6 +360,22 @@ def main() -> int:
     <article>
 {body}
     </article>
+
+    <section class="resources" aria-label="Additional resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="https://www.kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/from-local-validation-to-live-evaluation">Kaggle paper writeup — From Local Validation to Live Evaluation</a></li>
+        <li><a href="https://www.kaggle.com/datasets/moranzavdi/gemma4-agent-behavior-vs-accuracy">Kaggle dataset — Gemma4 Agent Behavior vs Accuracy</a></li>
+        <li><a href="https://www.kaggle.com/code/moranzavdi/reproduce-gemma4-agent-behavior-study">Reproduce notebook</a> ·
+            <a href="https://www.kaggle.com/code/moranzavdi/explore-gemma4-agent-calibration">Explore</a> ·
+            <a href="https://www.kaggle.com/code/moranzavdi/gemma4-agent-lessons-for-competitors">Lessons</a></li>
+        <li><a href="https://www.kaggle.com/datasets/moranzavdi/gemma4-soundness-and-punica-bench">Paper-track dataset</a> ·
+            <a href="https://www.kaggle.com/code/moranzavdi/from-local-validation-to-live-evaluation">Paper-track notebook</a></li>
+        <li><a href="https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition">GitHub evidence release</a></li>
+        <li><a href="https://medium.com/@when1go2market">Medium</a></li>
+        <li><a href="https://www.kaggle.com/competitions/gemma-4-developer-agent">Gemma 4 Developer Agent Competition</a></li>
+      </ul>
+    </section>
 
     <p class="credit">
       Written by <strong>Moran Zavdi</strong>.

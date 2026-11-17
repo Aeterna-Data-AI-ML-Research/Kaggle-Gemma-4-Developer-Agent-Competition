@@ -10,6 +10,7 @@ Gemma 4 Developer Agent Competition.
 **Notebooks:** [`notebooks/`](notebooks/) · [Reproduce](https://www.kaggle.com/code/moranzavdi/reproduce-gemma4-agent-behavior-study) · [Explore](https://www.kaggle.com/code/moranzavdi/explore-gemma4-agent-calibration) · [Lessons](https://www.kaggle.com/code/moranzavdi/gemma4-agent-lessons-for-competitors)  
 **Dataset:** [moranzavdi/gemma4-agent-behavior-vs-accuracy](https://www.kaggle.com/datasets/moranzavdi/gemma4-agent-behavior-vs-accuracy)  
 **Medium:** https://medium.com/@when1go2market  
+**Paper writeup:** [from-local-validation-to-live-evaluation](https://www.kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/from-local-validation-to-live-evaluation)  
 **Evidence cutoff:** 2026-11-17
 
 <p align="center">
@@ -102,6 +103,7 @@ Curated for other competitors and DS readers. Everything below is **public** and
 | --- | --- | --- |
 | Soundness / Punica evidence dataset | Host vs local validation claims + toolkit | [gemma4-soundness-and-punica-bench](https://www.kaggle.com/datasets/moranzavdi/gemma4-soundness-and-punica-bench) |
 | Reproduce notebook | Recomputes paper-track numbers end-to-end | [from-local-validation-to-live-evaluation](https://www.kaggle.com/code/moranzavdi/from-local-validation-to-live-evaluation) |
+| **Kaggle paper writeup** | Official competition writeup | [from-local-validation-to-live-evaluation](https://www.kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/from-local-validation-to-live-evaluation) |
 
 ### Intentionally *not* uploaded
 
@@ -160,6 +162,12 @@ Base model weights and the competition host are out of band (see `NOTICE`).
 
 Competition: https://www.kaggle.com/competitions/gemma-4-developer-agent  
 Site: https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/
+
+## Additional resources
+
+- **Kaggle paper writeup:** [https://www.kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/from-local-validation-to-live-evaluation](https://www.kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/from-local-validation-to-live-evaluation)
+- **Medium:** https://medium.com/@when1go2market
+- **Pages article:** https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/
 
 ## Contributing
 

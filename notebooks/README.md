@@ -17,6 +17,7 @@ Easy entry points for data scientists and competitors.
 **Competition:** https://www.kaggle.com/competitions/gemma-4-developer-agent  
 **GitHub (canonical):** https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition  
 **Medium:** https://medium.com/@when1go2market
+**Paper writeup:** https://www.kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/from-local-validation-to-live-evaluation
 
 Each notebook opens with a **Credits & related assets** cell (GitHub + sibling notebooks/datasets with full URLs) and ends with a **Next steps & credits** table.
 

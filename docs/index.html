@@ -259,8 +259,29 @@
     ul, ol { padding-left: 1.3rem; }
     li { margin: 0.25rem 0; }
     hr { border: 0; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .resources {
+      margin-top: 2.5rem;
+      padding: 1.25rem 1.25rem 0.5rem;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .resources h2 {
+      margin-top: 0;
+      border-bottom: none;
+      font-size: 1.15rem;
+    }
+    .resources ul {
+      padding-left: 1.2rem;
+      margin: 0.5rem 0 1rem;
+    }
+    .resources li {
+      margin: 0.45rem 0;
+      font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+      font-size: 0.95rem;
+    }
     .credit {
-      margin-top: 3rem;
+      margin-top: 2rem;
       padding-top: 1rem;
       border-top: 1px solid var(--border);
       font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", system-ui, sans-serif;
@@ -301,6 +322,7 @@
 <strong>Competition:</strong> <a href="https://www.kaggle.com/competitions/gemma-4-developer-agent">Google — The Gemma 4 Developer Agent Competition</a><br>
 <strong>Scope:</strong> 31B main track, E4B small-model track, the final 1,350-episode calibration campaign, and relevant Kaggle submissions<br>
 <strong>Supporting files:</strong> <a href="https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition">GitHub repository</a> (<code>evidence/</code>, <code>benchmark/</code>, <code>scripts/reproduce_all_tables.py</code>, <code>notebooks/</code>)<br>
+<strong>Kaggle paper writeup:</strong> <a href="https://www.kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/from-local-validation-to-live-evaluation">From Local Validation to Live Evaluation</a><br>
 <strong>Kaggle dataset + notebooks:</strong> <a href="https://www.kaggle.com/datasets/moranzavdi/gemma4-agent-behavior-vs-accuracy">gemma4-agent-behavior-vs-accuracy</a> · <a href="https://www.kaggle.com/code/moranzavdi/reproduce-gemma4-agent-behavior-study">reproduce</a> · <a href="https://www.kaggle.com/code/moranzavdi/explore-gemma4-agent-calibration">explore</a></p>
 <hr>
 <h2 id="abstract">Abstract</h2>
@@ -1151,6 +1173,22 @@ python scripts/reproduce_all_tables.py
 <strong>Repository:</strong> <a href="https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition">Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition</a><br>
 <strong>License:</strong> Apache-2.0</p>
     </article>
+
+    <section class="resources" aria-label="Additional resources">
+      <h2>Additional resources</h2>
+      <ul>
+        <li><a href="https://www.kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/from-local-validation-to-live-evaluation">Kaggle paper writeup — From Local Validation to Live Evaluation</a></li>
+        <li><a href="https://www.kaggle.com/datasets/moranzavdi/gemma4-agent-behavior-vs-accuracy">Kaggle dataset — Gemma4 Agent Behavior vs Accuracy</a></li>
+        <li><a href="https://www.kaggle.com/code/moranzavdi/reproduce-gemma4-agent-behavior-study">Reproduce notebook</a> ·
+            <a href="https://www.kaggle.com/code/moranzavdi/explore-gemma4-agent-calibration">Explore</a> ·
+            <a href="https://www.kaggle.com/code/moranzavdi/gemma4-agent-lessons-for-competitors">Lessons</a></li>
+        <li><a href="https://www.kaggle.com/datasets/moranzavdi/gemma4-soundness-and-punica-bench">Paper-track dataset</a> ·
+            <a href="https://www.kaggle.com/code/moranzavdi/from-local-validation-to-live-evaluation">Paper-track notebook</a></li>
+        <li><a href="https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition">GitHub evidence release</a></li>
+        <li><a href="https://medium.com/@when1go2market">Medium</a></li>
+        <li><a href="https://www.kaggle.com/competitions/gemma-4-developer-agent">Gemma 4 Developer Agent Competition</a></li>
+      </ul>
+    </section>
 
     <p class="credit">
       Written by <strong>Moran Zavdi</strong>.
