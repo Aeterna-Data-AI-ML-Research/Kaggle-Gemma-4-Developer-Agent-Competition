@@ -28,6 +28,13 @@ docs/figures/fig3_lb_and_funnel.jpg
 docs/index.html
 docs/article.md
 docs/.nojekyll
+docs/robots.txt
+docs/sitemap.xml
+docs/llms.txt
+docs/llms-full.txt
+docs/ai.txt
+docs/humans.txt
+llms.txt
 scripts/build_pages.py
 scripts/build_compact_evidence.py
 scripts/reproduce_all_tables.py

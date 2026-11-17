@@ -1,0 +1,13 @@
+/* TEAM */
+Author: Moran Zavdi
+Org: Aeterna Data AI/ML Research
+Site: https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/
+Repo: https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition
+
+/* SITE */
+Standards: HTML5, Markdown, JSON-LD (Schema.org ScholarlyArticle)
+Components: ascii.rest (MIT) for decorative ASCII animations
+Last update: 2026-11-17
+
+/* THANKS */
+Kaggle Gemma 4 Developer Agent Competition host tooling and public Python OSS repos used as repair tasks.

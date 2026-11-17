@@ -3,10 +3,126 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>When Better Agent Behavior Does Not Improve Accuracy</title>
-  <meta name="description" content="An evidence-first retrospective on building and evaluating a code-repair agent for the Gemma 4 Developer Agent Competition." />
+  <title>When Better Agent Behavior Does Not Improve Accuracy — Moran Zavdi</title>
+  <meta name="description" content="Evidence-first retrospective: Gemma 4 code-repair agent, 1,350 paired episodes. Better process behavior (Think-1024) did not raise working-tree accuracy (48/150 = 48/150)." />
   <meta name="author" content="Moran Zavdi" />
+  <meta name="keywords" content="Gemma 4, software engineering agents, SWE, evaluation, virtual clock, Kaggle, code repair, LoRA, ForgeSWE, working-tree pass, Moran Zavdi" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <meta name="googlebot" content="index, follow" />
   <link rel="canonical" href="https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/" />
+  <link rel="alternate" type="text/markdown" href="article.md" title="Article Markdown" />
+  <link rel="alternate" type="text/plain" href="llms.txt" title="llms.txt" />
+  <link rel="author" href="humans.txt" />
+  <link rel="license" href="https://www.apache.org/licenses/LICENSE-2.0" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Aeterna Data AI/ML Research" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:url" content="https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/" />
+  <meta property="og:title" content="When Better Agent Behavior Does Not Improve Accuracy" />
+  <meta property="og:description" content="1,350-episode calibration of a Gemma 4 autonomous code-repair agent. Shorter reasoning and earlier submits changed behavior, not WT accuracy." />
+  <meta property="og:image" content="https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/figures/hero_evidence_first_study.jpg" />
+  <meta property="og:image:alt" content="Evidence-first study summary figure" />
+  <meta property="article:author" content="Moran Zavdi" />
+  <meta property="article:published_time" content="2026-11-17" />
+  <meta property="article:section" content="Machine Learning" />
+  <meta property="article:tag" content="Gemma 4" />
+  <meta property="article:tag" content="software engineering agents" />
+  <meta property="article:tag" content="evaluation" />
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="When Better Agent Behavior Does Not Improve Accuracy" />
+  <meta name="twitter:description" content="Evidence-first Gemma 4 agent study by Moran Zavdi. Think-1024 changed behavior, not accuracy." />
+  <meta name="twitter:image" content="https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/figures/hero_evidence_first_study.jpg" />
+  <!-- AEO / GEO discovery -->
+  <link rel="describedby" href="https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/llms.txt" />
+  <meta name="citation_title" content="When Better Agent Behavior Does Not Improve Accuracy" />
+  <meta name="citation_author" content="Zavdi, Moran" />
+  <meta name="citation_publication_date" content="2026-11-17" />
+  <meta name="citation_online_date" content="2026-11-17" />
+  <meta name="citation_fulltext_html_url" content="https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/" />
+  <meta name="citation_pdf_url" content="https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition/blob/main/PAPER.md" />
+  <meta name="citation_license" content="https://www.apache.org/licenses/LICENSE-2.0" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ScholarlyArticle",
+        "@id": "https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/#article",
+        "headline": "When Better Agent Behavior Does Not Improve Accuracy",
+        "name": "When Better Agent Behavior Does Not Improve Accuracy",
+        "description": "Evidence-first retrospective on a Gemma 4 autonomous code-repair agent under a 420s virtual clock. 1,350 paired episodes; Think-1024 changed behavior but not working-tree accuracy.",
+        "datePublished": "2026-11-17",
+        "dateModified": "2026-11-17",
+        "inLanguage": "en",
+        "license": "https://www.apache.org/licenses/LICENSE-2.0",
+        "author": {
+          "@type": "Person",
+          "name": "Moran Zavdi",
+          "url": "https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Aeterna Data AI/ML Research",
+          "url": "https://github.com/Aeterna-Data-AI-ML-Research"
+        },
+        "image": [
+          "https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/figures/hero_evidence_first_study.jpg",
+          "https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/figures/hero_agent_workbench.jpg"
+        ],
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/"
+        },
+        "isBasedOn": "https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition",
+        "keywords": [
+          "Gemma 4",
+          "software engineering agents",
+          "evaluation",
+          "virtual clock",
+          "SWE",
+          "code repair"
+        ],
+        "about": [
+          {"@type": "Thing", "name": "Autonomous software engineering agents"},
+          {"@type": "Thing", "name": "Gemma 4 Developer Agent Competition"}
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/#website",
+        "url": "https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/",
+        "name": "When Better Agent Behavior Does Not Improve Accuracy",
+        "publisher": {"@id": "https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/#org"},
+        "inLanguage": "en"
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/#org",
+        "name": "Aeterna Data AI/ML Research",
+        "url": "https://github.com/Aeterna-Data-AI-ML-Research"
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Aeterna Data AI/ML Research",
+            "item": "https://github.com/Aeterna-Data-AI-ML-Research"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "When Better Agent Behavior Does Not Improve Accuracy",
+            "item": "https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
   <script type="module" src="https://ascii.rest/ascii.js"></script>
   <style>
     :root {
@@ -197,6 +313,9 @@
     <div class="topbar">
       <a href="https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition">GitHub</a>
       <a href="https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/">Pages</a>
+      <a href="article.md">Markdown</a>
+      <a href="llms.txt">llms.txt</a>
+      <a href="sitemap.xml">Sitemap</a>
       <span>Author: Moran Zavdi</span>
       <span>Apache-2.0 · evidence-first Gemma 4 agent study</span>
     </div>
@@ -1095,6 +1214,11 @@ python scripts/reproduce_all_tables.py
     <p class="credit">
       Written by <strong>Moran Zavdi</strong>.
       Decorative animations by <a href="https://ascii.rest/">ascii.rest</a> (MIT).
+      SEO / AEO / GEO: <a href="robots.txt">robots.txt</a> ·
+      <a href="sitemap.xml">sitemap.xml</a> ·
+      <a href="llms.txt">llms.txt</a> ·
+      <a href="ai.txt">ai.txt</a> ·
+      <a href="humans.txt">humans.txt</a>.
       Rebuild with <code>python scripts/build_pages.py</code>.
     </p>
   </main>

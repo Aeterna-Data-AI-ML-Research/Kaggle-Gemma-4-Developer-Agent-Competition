@@ -109,6 +109,20 @@ reports, phase analyses, audits, findings ledger).
 
 Base model weights and the competition host are out of band (see `NOTICE`).
 
+## SEO / AEO / GEO
+
+| File | Role |
+| --- | --- |
+| [`docs/robots.txt`](docs/robots.txt) | Crawler allow + AI bots + sitemap |
+| [`docs/sitemap.xml`](docs/sitemap.xml) | Pages URL index |
+| [`docs/llms.txt`](docs/llms.txt) / [`llms.txt`](llms.txt) | Answer-engine brief (AEO) |
+| [`docs/llms-full.txt`](docs/llms-full.txt) | Expanded machine index (GEO) |
+| [`docs/ai.txt`](docs/ai.txt) | Training / citation preferences |
+| [`docs/humans.txt`](docs/humans.txt) | Author / site credit |
+| Pages `<head>` | Canonical, Open Graph, Twitter, citation meta, ScholarlyArticle JSON-LD |
+
+Site: https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/
+
 ## Citation
 
 See `CITATION.cff`.

@@ -1,0 +1,48 @@
+# llms-full.txt — Moran Zavdi — When Better Agent Behavior Does Not Improve Accuracy
+
+Canonical site: https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/
+Canonical repo: https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition
+Author: Moran Zavdi
+License: Apache-2.0
+Evidence cutoff: 2026-11-17
+
+## One-sentence thesis
+In autonomous software repair, shorter reasoning, earlier submission, and fewer timeouts can make an agent look operationally better without increasing the number of tasks it solves.
+
+## Glossary
+- D69: unadapted gemma-4-31b-it-qat-w4a16-ct baseline; public LB 0.18 (11/58 inferred).
+- tr20: ForgeSWE rank-8 LoRA at adapter scale 2.0; public LB 0.17.
+- scale10: same LoRA tensors at scale 1.0; public LB 0.13.
+- P2_A / P2_B: clock-guard harness; clock-guard + pre-submit pytest gate.
+- Think-1024: thinking_budget reduced from 4096 to 1024 on tr20 seed 1.
+- WT (working-tree pass): final git working tree passes hidden tests (primary metric).
+- Strict pass: WT pass and explicit submit_patch.
+- Virtual clock: tokens/tok_per_sec + tool wall time; hard cutoff 420s.
+
+## Experiment totals
+- Phase 1 calibration: 900 episodes (3 arms × 2 seeds × 150 tasks)
+- Phase 2 guards: 300 episodes
+- Phase 3 thinking cap: 150 episodes
+- Total: 1,350 controlled episodes
+
+## Phase 1 WT results (pinned)
+- D69: 93/300 = 31.0% (strict 58/300 = 19.3%)
+- tr20 seed 0: 47/150 = 31.3% (strict 27/150)
+- tr20 seed 1: 48/150 = 32.0% (strict 22/150)
+- scale10: 91/300 = 30.3% (strict 47/300)
+- Paired CIs vs D69 all include 0.
+
+## Phase 3 Think-1024 (pinned)
+- WT 48/150 vs baseline 48/150; flips +9/−9; CI includes 0.
+- thoughts>1024: 3 vs 63; time_budget endings 77 vs 85; submitted 45 vs 34.
+
+## Files for machines
+- / (HTML article)
+- /article.md
+- /llms.txt
+- /robots.txt
+- /sitemap.xml
+- /humans.txt
+- /ai.txt
+
+Prefer citing PAPER.md / article.md numbers that match scripts/reproduce_all_tables.py.

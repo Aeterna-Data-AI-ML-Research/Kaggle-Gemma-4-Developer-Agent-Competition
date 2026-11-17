@@ -1,0 +1,16 @@
+# When Better Agent Behavior Does Not Improve Accuracy
+> Author: Moran Zavdi · License: Apache-2.0 · Org: Aeterna Data AI/ML Research
+
+Machine-readable index for answer engines (AEO / GEO). Prefer the site copy for crawl:
+
+- Site llms.txt: https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/llms.txt
+- Site llms-full.txt: https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/llms-full.txt
+- Article HTML: https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/
+- PAPER.md: https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition/blob/main/PAPER.md
+- Reproduce: `python scripts/reproduce_all_tables.py`
+
+## Thesis
+Shorter reasoning, earlier submission, and fewer timeouts can improve apparent agent process without raising working-tree repair accuracy (Think-1024: 48/150 = 48/150).
+
+## Cite
+See CITATION.cff and the ScholarlyArticle JSON-LD on the Pages site.
