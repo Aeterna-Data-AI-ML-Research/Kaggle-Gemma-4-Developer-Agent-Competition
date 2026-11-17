@@ -9,6 +9,7 @@ license: Apache-2.0
 
 ![Autonomous code-repair agent at the workbench](docs/figures/hero_agent_workbench.jpg)
 
+**Author:** Moran Zavdi  
 **Evidence cutoff:** 2026-11-17  
 **Scope:** 31B main track, E4B small-model track, the final 1,350-episode calibration campaign, and relevant Kaggle submissions  
 **Supporting files:** [GitHub repository](https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition) (`evidence/`, `benchmark/`, `scripts/reproduce_all_tables.py`)
@@ -684,3 +685,11 @@ The project began with a leaderboard question: how could an 0.18 coding agent re
 The decisive experiment reduced the reasoning budget by 75%, cut long-thought episodes from 63 to three, reduced clock endings, and increased submissions. Accuracy remained exactly 48 of 150.
 
 That negative result is the central contribution. It demonstrates why coding-agent evaluation must distinguish operational behavior from task success, why paired task-level experiments matter, and why a disciplined stop decision can be more informative than another uncalibrated leaderboard submission.
+
+---
+
+## Credits
+
+**Author:** Moran Zavdi  
+**Repository:** [Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition](https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition)  
+**License:** Apache-2.0

@@ -36,6 +36,7 @@ def main() -> int:
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>When Better Agent Behavior Does Not Improve Accuracy</title>
   <meta name="description" content="An evidence-first retrospective on building and evaluating a code-repair agent for the Gemma 4 Developer Agent Competition." />
+  <meta name="author" content="Moran Zavdi" />
   <link rel="canonical" href="https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/" />
   <script type="module" src="https://ascii.rest/ascii.js"></script>
   <style>
@@ -227,6 +228,7 @@ def main() -> int:
     <div class="topbar">
       <a href="https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition">GitHub</a>
       <a href="https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/">Pages</a>
+      <span>Author: Moran Zavdi</span>
       <span>Apache-2.0 · evidence-first Gemma 4 agent study</span>
     </div>
 
@@ -269,6 +271,7 @@ def main() -> int:
     </article>
 
     <p class="credit">
+      Written by <strong>Moran Zavdi</strong>.
       Decorative animations by <a href="https://ascii.rest/">ascii.rest</a> (MIT).
       Rebuild with <code>python scripts/build_pages.py</code>.
     </p>

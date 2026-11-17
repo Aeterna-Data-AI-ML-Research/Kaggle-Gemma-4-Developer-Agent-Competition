@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>When Better Agent Behavior Does Not Improve Accuracy</title>
   <meta name="description" content="An evidence-first retrospective on building and evaluating a code-repair agent for the Gemma 4 Developer Agent Competition." />
+  <meta name="author" content="Moran Zavdi" />
   <link rel="canonical" href="https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/" />
   <script type="module" src="https://ascii.rest/ascii.js"></script>
   <style>
@@ -196,6 +197,7 @@
     <div class="topbar">
       <a href="https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition">GitHub</a>
       <a href="https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/">Pages</a>
+      <span>Author: Moran Zavdi</span>
       <span>Apache-2.0 · evidence-first Gemma 4 agent study</span>
     </div>
 
@@ -236,7 +238,8 @@
     <article>
 <h2 id="an-evidence-first-retrospective-on-building-and-evaluating-a-code-repair-agent-for-the-gemma-4-developer-agent-competition">An evidence-first retrospective on building and evaluating a code-repair agent for the Gemma 4 Developer Agent Competition</h2>
 <p><img alt="Autonomous code-repair agent at the workbench" src="figures/hero_agent_workbench.jpg"></p>
-<p><strong>Evidence cutoff:</strong> 2026-11-17<br>
+<p><strong>Author:</strong> Moran Zavdi<br>
+<strong>Evidence cutoff:</strong> 2026-11-17<br>
 <strong>Scope:</strong> 31B main track, E4B small-model track, the final 1,350-episode calibration campaign, and relevant Kaggle submissions<br>
 <strong>Supporting files:</strong> <a href="https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition">GitHub repository</a> (<code>evidence/</code>, <code>benchmark/</code>, <code>scripts/reproduce_all_tables.py</code>)</p>
 <hr>
@@ -1082,9 +1085,15 @@ python scripts/reproduce_all_tables.py
 <p>The project began with a leaderboard question: how could an 0.18 coding agent reach 0.29? It ended with a more useful scientific answer. The agent's visible inefficiencies—long thoughts, late edits, missing submission calls, and clock deaths—were real, measurable, and controllable. But fixing them did not create the missing capability required to solve more tasks.</p>
 <p>The decisive experiment reduced the reasoning budget by 75%, cut long-thought episodes from 63 to three, reduced clock endings, and increased submissions. Accuracy remained exactly 48 of 150.</p>
 <p>That negative result is the central contribution. It demonstrates why coding-agent evaluation must distinguish operational behavior from task success, why paired task-level experiments matter, and why a disciplined stop decision can be more informative than another uncalibrated leaderboard submission.</p>
+<hr>
+<h2 id="credits">Credits</h2>
+<p><strong>Author:</strong> Moran Zavdi<br>
+<strong>Repository:</strong> <a href="https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition">Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition</a><br>
+<strong>License:</strong> Apache-2.0</p>
     </article>
 
     <p class="credit">
+      Written by <strong>Moran Zavdi</strong>.
       Decorative animations by <a href="https://ascii.rest/">ascii.rest</a> (MIT).
       Rebuild with <code>python scripts/build_pages.py</code>.
     </p>
