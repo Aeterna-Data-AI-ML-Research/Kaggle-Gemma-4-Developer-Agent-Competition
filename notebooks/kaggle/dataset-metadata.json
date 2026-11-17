@@ -1,0 +1,8 @@
+{
+  "title": "Gemma4 Agent Behavior vs Accuracy",
+  "id": "moranzavdi/gemma4-agent-behavior-vs-accuracy",
+  "licenses": [{"name": "apache-2.0"}],
+  "keywords": ["evaluation"],
+  "subtitle": "1350 episodes: better process ≠ higher WT accuracy",
+  "description": "Companion dataset for Moran Zavdi's evidence-first retrospective \"When Better Agent Behavior Does Not Improve Accuracy\" (Gemma 4 Developer Agent Competition).\n\nContains evidence/*.jsonl (1,350 episodes), scripts/reproduce_all_tables.py, notebooks/, benchmark/, and article figures.\n\nCompetition: https://www.kaggle.com/competitions/gemma-4-developer-agent\nGitHub: https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition\nPages: https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/"
+}

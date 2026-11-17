@@ -7,6 +7,8 @@ Gemma 4 Developer Agent Competition.
 **License:** Apache-2.0  
 **Kaggle:** [Google — The Gemma 4 Developer Agent Competition](https://www.kaggle.com/competitions/gemma-4-developer-agent)  
 **Article:** [`PAPER.md`](PAPER.md) · [GitHub Pages (one-page article)](https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/)  
+**Notebooks:** [`notebooks/`](notebooks/) · [Reproduce](https://www.kaggle.com/code/moranzavdi/reproduce-gemma4-agent-behavior-study) · [Explore](https://www.kaggle.com/code/moranzavdi/explore-gemma4-agent-calibration)  
+**Dataset:** [moranzavdi/gemma4-agent-behavior-vs-accuracy](https://www.kaggle.com/datasets/moranzavdi/gemma4-agent-behavior-vs-accuracy)  
 **Pages styling:** [ascii.rest](https://ascii.rest/) animated banners + scenes  
 **Evidence cutoff:** 2026-11-17
 
@@ -80,10 +82,22 @@ Pins every table in [`PAPER.md`](PAPER.md) Sections 4–8 against
 
 Full definitions are in [`PAPER.md` §3](PAPER.md#terminology-and-configuration-glossary).
 
+## Notebooks (start here)
+
+| Notebook | What it does | Kaggle |
+| --- | --- | --- |
+| [`notebooks/01_reproduce_tables.ipynb`](notebooks/01_reproduce_tables.ipynb) | Pins PAPER.md §§4–8 against `evidence/*.jsonl` | [reproduce-gemma4-agent-behavior-study](https://www.kaggle.com/code/moranzavdi/reproduce-gemma4-agent-behavior-study) |
+| [`notebooks/02_explore_calibration.ipynb`](notebooks/02_explore_calibration.ipynb) | Episode EDA (WT, submits, gold-file opens, Think-1024) | [explore-gemma4-agent-calibration](https://www.kaggle.com/code/moranzavdi/explore-gemma4-agent-calibration) |
+
+Public dataset with the same evidence + scripts: [gemma4-agent-behavior-vs-accuracy](https://www.kaggle.com/datasets/moranzavdi/gemma4-agent-behavior-vs-accuracy).
+
+**Also used (paper track):** [gemma4-soundness-and-punica-bench](https://www.kaggle.com/datasets/moranzavdi/gemma4-soundness-and-punica-bench) · [from-local-validation-to-live-evaluation](https://www.kaggle.com/code/moranzavdi/from-local-validation-to-live-evaluation)
+
 ## Layout
 
 ```text
 PAPER.md           Final retrospective article
+notebooks/         Reproduce + explore notebooks (also on Kaggle)
 benchmark/         tasks_manifest.jsonl + PROTOCOL.md
 evidence/          phase1/2/3 compact JSONL + SCHEMA.md
 configs/           stripped D69-shaped baseline (no proprietary prompts)

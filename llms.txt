@@ -4,11 +4,14 @@
 Machine-readable index for answer engines (AEO / GEO). Prefer the site copy for crawl:
 
 - Kaggle competition: https://www.kaggle.com/competitions/gemma-4-developer-agent
+- Kaggle dataset: https://www.kaggle.com/datasets/moranzavdi/gemma4-agent-behavior-vs-accuracy
+- Reproduce notebook: https://www.kaggle.com/code/moranzavdi/reproduce-gemma4-agent-behavior-study
+- Explore notebook: https://www.kaggle.com/code/moranzavdi/explore-gemma4-agent-calibration
 - Site llms.txt: https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/llms.txt
 - Site llms-full.txt: https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/llms-full.txt
 - Article HTML: https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/
 - PAPER.md: https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition/blob/main/PAPER.md
-- Reproduce: `python scripts/reproduce_all_tables.py`
+- Reproduce: `python scripts/reproduce_all_tables.py` · or open `notebooks/`
 
 ## Thesis
 Shorter reasoning, earlier submission, and fewer timeouts can improve apparent agent process without raising working-tree repair accuracy (Think-1024: 48/150 = 48/150).

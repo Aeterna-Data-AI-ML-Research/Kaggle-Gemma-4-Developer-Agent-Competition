@@ -353,6 +353,8 @@ def main() -> int:
   <main class="wrap">
     <div class="topbar">
       <a href="https://www.kaggle.com/competitions/gemma-4-developer-agent">Kaggle</a>
+      <a href="https://www.kaggle.com/datasets/moranzavdi/gemma4-agent-behavior-vs-accuracy">Dataset</a>
+      <a href="https://www.kaggle.com/code/moranzavdi/reproduce-gemma4-agent-behavior-study">Notebook</a>
       <a href="https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition">GitHub</a>
       <a href="https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/">Pages</a>
       <a href="article.md">Markdown</a>
