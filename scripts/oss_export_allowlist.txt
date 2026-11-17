@@ -38,6 +38,7 @@ llms.txt
 notebooks/README.md
 notebooks/01_reproduce_tables.ipynb
 notebooks/02_explore_calibration.ipynb
+notebooks/kaggle/dataset-metadata.json
 scripts/build_pages.py
 scripts/build_compact_evidence.py
 scripts/reproduce_all_tables.py
