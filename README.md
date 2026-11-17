@@ -85,9 +85,16 @@ benchmark/         tasks_manifest.jsonl + PROTOCOL.md
 evidence/          phase1/2/3 compact JSONL + SCHEMA.md
 configs/           stripped D69-shaped baseline (no proprietary prompts)
 docs/figures/      hero art + Figures 1–3
+research/         supporting MD archive (plans, overnight, phase reports)
 scripts/           reproduce_all_tables.py, plot_figures.py, …
 reports/           appendices
 ```
+
+## Supporting research
+
+The thin top-level tree is for fast reproduction. The longer research trail that
+supported the evidence lives under [`research/`](research/) (plans, overnight
+reports, phase analyses, audits, findings ledger).
 
 ## Included / excluded
 
