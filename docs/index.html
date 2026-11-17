@@ -209,37 +209,6 @@
       font-size: 0.88rem;
       color: var(--muted);
     }
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.75rem;
-      margin: 1.5rem 0 2rem;
-    }
-    @media (max-width: 640px) {
-      .stats { grid-template-columns: 1fr; }
-    }
-    .stat {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.9rem 1rem;
-    }
-    .stat .k {
-      font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", system-ui, sans-serif;
-      font-size: 0.72rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin: 0 0 0.35rem;
-    }
-    .stat .v {
-      font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", system-ui, sans-serif;
-      font-size: 1.15rem;
-      font-weight: 650;
-      color: var(--hero);
-      margin: 0;
-      letter-spacing: -0.02em;
-    }
     h1, h2, h3, h4 {
       font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", system-ui, sans-serif;
       line-height: 1.25;
@@ -329,23 +298,8 @@
         Shorter reasoning, earlier submission, and fewer timeouts can make an agent
         look operationally better without increasing the number of tasks it solves.
       </p>
-      <p class="meta">Author Moran Zavdi · Evidence cutoff 2026-11-17 · Virtual clock 420s</p>
+      <p class="meta">Moran Zavdi · 2026-11-17</p>
     </header>
-
-    <section class="stats" aria-label="Key figures">
-      <div class="stat">
-        <p class="k">Episodes</p>
-        <p class="v">1,350 paired</p>
-      </div>
-      <div class="stat">
-        <p class="k">Think-1024 WT</p>
-        <p class="v">48/150 = 48/150</p>
-      </div>
-      <div class="stat">
-        <p class="k">Public floor</p>
-        <p class="v">0.18 (unadapted)</p>
-      </div>
-    </section>
 
     <article>
 <h2 id="an-evidence-first-retrospective-on-building-and-evaluating-a-code-repair-agent-for-the-gemma-4-developer-agent-competition">An evidence-first retrospective on building and evaluating a code-repair agent for the Gemma 4 Developer Agent Competition</h2>
