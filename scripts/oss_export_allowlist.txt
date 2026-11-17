@@ -25,6 +25,10 @@ docs/figures/hero_agent_workbench.jpg
 docs/figures/fig1_wt_vs_strict.jpg
 docs/figures/fig2_fatal_turn_timeline.jpg
 docs/figures/fig3_lb_and_funnel.jpg
+docs/index.html
+docs/article.md
+docs/.nojekyll
+scripts/build_pages.py
 scripts/build_compact_evidence.py
 scripts/reproduce_all_tables.py
 scripts/plot_figures.py

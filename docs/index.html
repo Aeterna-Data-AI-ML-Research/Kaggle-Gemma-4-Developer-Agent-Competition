@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>When Better Agent Behavior Does Not Improve Accuracy</title>
+  <meta name="description" content="An evidence-first retrospective on building and evaluating a code-repair agent for the Gemma 4 Developer Agent Competition." />
+  <link rel="canonical" href="https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/" />
+  <style>
+    :root { --bg:#0f1115; --panel:#171a21; --text:#e8eaed; --muted:#9aa0a6; --accent:#7cb3ff; --border:#2a2f3a; --code:#1e2430; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin:0; background:var(--bg); color:var(--text); font:18px/1.65 "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif; }
+    .wrap { max-width:820px; margin:0 auto; padding:2.5rem 1.25rem 4rem; }
+    h1,h2,h3,h4 { font-family:"Avenir Next","Segoe UI",system-ui,sans-serif; line-height:1.25; letter-spacing:-0.02em; }
+    h1 { font-size:2.1rem; margin:0 0 .4rem; }
+    h2 { font-size:1.45rem; margin-top:2.4rem; border-bottom:1px solid var(--border); padding-bottom:.35rem; }
+    h3 { font-size:1.15rem; margin-top:1.6rem; color:#d7dbe3; }
+    p { margin:.9rem 0; }
+    a { color:var(--accent); }
+    img { max-width:100%; height:auto; display:block; margin:1.25rem auto; border-radius:8px; border:1px solid var(--border); background:#000; }
+    em { color:var(--muted); }
+    table { width:100%; border-collapse:collapse; font-size:.92rem; font-family:"Avenir Next","Segoe UI",system-ui,sans-serif; margin:1.2rem 0; overflow-x:auto; display:block; }
+    th,td { border:1px solid var(--border); padding:.45rem .6rem; text-align:left; background:var(--panel); }
+    th { background:#1f2530; }
+    code,pre { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.86rem; }
+    code { background:var(--code); padding:.1rem .35rem; border-radius:4px; }
+    pre { background:var(--code); padding:.9rem 1rem; border-radius:8px; overflow-x:auto; border:1px solid var(--border); }
+    pre code { background:none; padding:0; }
+    ul,ol { padding-left:1.3rem; }
+    li { margin:.25rem 0; }
+    hr { border:0; border-top:1px solid var(--border); margin:2rem 0; }
+    .topbar { font-family:"Avenir Next","Segoe UI",system-ui,sans-serif; font-size:.85rem; color:var(--muted); margin-bottom:1.5rem; }
+    .topbar a { text-decoration:none; }
+    @media (max-width:640px) { body { font-size:16px; } h1 { font-size:1.7rem; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="topbar">
+      <a href="https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition">GitHub repository</a>
+      · evidence-first Gemma 4 agent study · Apache-2.0
+    </div>
+    <article>
+<h1 id="when-better-agent-behavior-does-not-improve-accuracy">When Better Agent Behavior Does Not Improve Accuracy</h1>
+<h2 id="an-evidence-first-retrospective-on-building-and-evaluating-a-code-repair-agent-for-the-gemma-4-developer-agent-competition">An evidence-first retrospective on building and evaluating a code-repair agent for the Gemma 4 Developer Agent Competition</h2>
+<p><img alt="Autonomous code-repair agent at the workbench" src="figures/hero_agent_workbench.jpg"></p>
+<p><strong>Evidence cutoff:</strong> 2026-11-17<br>
+<strong>Scope:</strong> 31B main track, E4B small-model track, the final 1,350-episode calibration campaign, and relevant Kaggle submissions<br>
+<strong>Supporting files:</strong> <a href="https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition">GitHub repository</a> (<code>evidence/</code>, <code>benchmark/</code>, <code>scripts/reproduce_all_tables.py</code>)</p>
+<hr>
+<h2 id="abstract">Abstract</h2>
+<p>We built and evaluated an autonomous software-repair agent for Kaggle's Gemma 4 Developer Agent Competition. The agent had to inspect unfamiliar Python repositories, localize defects, edit code through host-provided tools, and produce patches that passed hidden tests. The fixed 31B model was capable enough to solve a meaningful fraction of tasks, but the project repeatedly encountered a measurement problem: small local panels and single leaderboard submissions could not distinguish real improvements from sampling noise.</p>
+<p>To address this, we built a 300-task evaluation pool, froze a 150-task calibration split and a 150-task sealed test split, implemented a virtual clock matching the host budget, and ran 1,350 controlled episodes across known agent configurations. The final campaign included 900 Phase 1 calibration episodes, 300 submit-guard episodes, and 150 thinking-budget episodes. It produced four central results.</p>
+<p>First, three configurations with materially different Kaggle scores were statistically indistinguishable offline: working-tree pass rates ranged from 30.3% to 32.0%, and every paired confidence interval included zero. Second, an oracle over six rollouts raised the solve rate from roughly 31% to 44%, showing substantial stochastic headroom but no deployable selection mechanism. Third, most clock-killed episodes had already found the relevant file; failures were dominated by late editing, long reasoning bursts, incomplete fixes, and weak patch construction rather than simple localization. Fourth, reducing the thinking budget from 4,096 to 1,024 tokens successfully changed behavior—long thoughts nearly disappeared and more episodes submitted patches—but did not improve accuracy: both capped and uncapped runs solved exactly 48 of 150 tasks.</p>
+<p>The public leaderboard told the same story. Our stable unadapted 31B agent scored 0.18, while every trained or heavily modified configuration scored 0.17 or below. The final decision was therefore to stop GPU spending and retain the stable 0.18 submission. The broader lesson is that agentic software engineering requires evaluation at the task level, paired controls, and explicit separation of behavioral improvements from capability improvements.</p>
+<p><img alt="Evidence-first study summary" src="figures/hero_evidence_first_study.jpg"></p>
+<hr>
+<h2 id="reproducing-the-numbers">Reproducing the numbers</h2>
+<pre><code class="language-bash">git clone https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition.git
+cd Kaggle-Gemma-4-Developer-Agent-Competition
+pip install -r requirements.txt
+python scripts/reproduce_all_tables.py
+</code></pre>
+<p>All tables in Sections 4–8 are pinned against <code>evidence/*.jsonl</code> (see <code>evidence/SCHEMA.md</code>).</p>
+<hr>
+<h2 id="1-competition-setting">1. Competition setting</h2>
+<p>The competition required a declarative Google ADK submission rather than an arbitrary executable agent. The submitted bundle specified prompts, tools, sampling settings, budgets, and optionally an adapter. Host-side Python from the submission did not run. The agent operated under several hard constraints:</p>
+<ul>
+<li>a fixed Gemma 4 model variant;</li>
+<li>a 32k context window;</li>
+<li>a global 12-hour generation budget;</li>
+<li>a per-episode tool-call and time budget;</li>
+<li>hidden Python repair tasks;</li>
+<li>one slow competition submission per day (probably the most difficult constraint);</li>
+<li>up to two final selections;</li>
+<li>final ranking on a private task set.</li>
+</ul>
+<p>The main model was <code>gemma-4-31b-it-qat-w4a16-ct</code>. The small-model bonus used <code>gemma-4-e4b-it-qat-w4a16-ct</code>.</p>
+<p>The public leaderboard contained 5,940 teams at the final snapshot used in this report. Its score lattice is consistent with 58 public tasks and truncation to two decimals:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Public score</th>
+<th style="text-align: right;">Implied solved tasks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0.06</td>
+<td style="text-align: right;">4 / 58</td>
+</tr>
+<tr>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">6 / 58</td>
+</tr>
+<tr>
+<td style="text-align: right;">0.13</td>
+<td style="text-align: right;">8 / 58</td>
+</tr>
+<tr>
+<td style="text-align: right;">0.17</td>
+<td style="text-align: right;">10 / 58</td>
+</tr>
+<tr>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">11 / 58</td>
+</tr>
+<tr>
+<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">12 / 58</td>
+</tr>
+<tr>
+<td style="text-align: right;">0.22</td>
+<td style="text-align: right;">13 / 58</td>
+</tr>
+<tr>
+<td style="text-align: right;">0.24</td>
+<td style="text-align: right;">14 / 58</td>
+</tr>
+<tr>
+<td style="text-align: right;">0.29</td>
+<td style="text-align: right;">17 / 58</td>
+</tr>
+</tbody>
+</table>
+<p>This matters because a one-task swing changes the displayed score by about 0.017. A change from 0.18 to 0.20 can therefore represent a single additional solved task rather than a broad capability gain.</p>
+<p>At the snapshot:</p>
+<ul>
+<li>the leading public score was 0.29, or 17 of 58 tasks;</li>
+<li>15 teams had at least 0.24;</li>
+<li>124 had at least 0.22;</li>
+<li>653 had at least 0.20;</li>
+<li>our team ranked 752nd at 0.18;</li>
+<li>1,133 teams were tied at 0.18.</li>
+</ul>
+<p>These are public-board observations, not estimates of private-board performance.</p>
+<hr>
+<h2 id="2-why-the-original-evaluation-loop-was-unreliable">2. Why the original evaluation loop was unreliable</h2>
+<p>Early development used local panels containing 9–13 tasks. Those panels were useful for wiring checks but had very high statistical uncertainty. On a 13-task panel, one task changes the reported rate by 7.7 percentage points. A configuration scoring 4/13 could look dramatically stronger than one scoring 2/13 even when the difference was mostly task selection or sampling noise.</p>
+<p>The Kaggle leaderboard was not a clean replacement:</p>
+<ol>
+<li>only one submission was available per day;</li>
+<li>the public board contained 58 tasks;</li>
+<li>model sampling was stochastic;</li>
+<li>the public and private task sets differed;</li>
+<li>many submissions changed several variables simultaneously.</li>
+</ol>
+<p>The resulting feedback loop encouraged overinterpretation. Local panel winners frequently regressed on Kaggle, and public leaderboard reproductions did not reproduce across teams. Several public configurations reported near 0.24 elsewhere but scored 0.12–0.18 when reproduced in our account.</p>
+<p>The project therefore moved from leaderboard-driven iteration to an evidence-first evaluation protocol.</p>
+<hr>
+<h2 id="3-evaluation-design">3. Evaluation design</h2>
+<h3 id="terminology-and-configuration-glossary">Terminology and configuration glossary</h3>
+<p>Throughout this study, we refer to experimental arms and harness concepts using the internal identifiers recorded in our benchmark manifests and reproducible evidence packs:</p>
+<table>
+<thead>
+<tr>
+<th>Identifier</th>
+<th>Kind</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>D69</strong> (Base-31B Reference)</td>
+<td>Model arm</td>
+<td>Unadapted <code>gemma-4-31b-it-qat-w4a16-ct</code> baseline with a 6-tool declarative contract (<code>read_file</code>, <code>edit_file</code>, <code>write_file</code>, <code>run_shell</code>, <code>grep_search</code>, <code>submit_patch</code>), <code>thinking_budget = 4096</code>, no LoRA adapter (14.0 tok/s). Public LB <strong>0.18</strong> (11/58).</td>
+</tr>
+<tr>
+<td><strong>ForgeSWE</strong> (SurgicalTune)</td>
+<td>Training method</td>
+<td>Targeted PEFT recipe for 4-bit QAT models: freeze attention projections (<code>q/k/v/o_proj</code>) to preserve long-context localization; train rank-8 LoRA on MLP projections (<code>gate/up/down_proj</code>) over verified on-policy repair trajectories.</td>
+</tr>
+<tr>
+<td><strong>tr20</strong> (Adapter-Scale-2.0)</td>
+<td>Model arm</td>
+<td>ForgeSWE rank-8 LoRA (<code>r = 8</code>) served with <code>lora_alpha = 16</code> (effective scale 2.0), temperature 0.2, and 4 domain skill declarations. ~7.1% Punica throughput tax (13.006 tok/s). Public LB <strong>0.17</strong> (10/58).</td>
+</tr>
+<tr>
+<td><strong>scale10</strong> (Adapter-Scale-1.0)</td>
+<td>Model arm</td>
+<td>Same LoRA tensors as tr20, halved adapter scale (<code>lora_alpha = 8</code>, effective scale 1.0) and greedy decoding (<code>temperature = 0.0</code>). Public LB <strong>0.13</strong> (8/58).</td>
+</tr>
+<tr>
+<td><strong>P2_A</strong> (Clock-Guard)</td>
+<td>Harness arm</td>
+<td>tr20 plus harness-injected virtual-clock warnings at 330 s and 375 s prompting finalize + <code>submit_patch</code> before the 420 s deadline.</td>
+</tr>
+<tr>
+<td><strong>P2_B</strong> (Test-Gate)</td>
+<td>Harness arm</td>
+<td>P2_A plus a pre-submission gate that intercepts <code>submit_patch</code> once if pytest has not run since the last file modification.</td>
+</tr>
+<tr>
+<td><strong>Think-1024</strong> (<code>a1_think1024</code>)</td>
+<td>Serving arm</td>
+<td>tr20 (seed 1, temperature 0.2) with vLLM per-turn <code>thinking_budget</code> reduced from 4,096 to 1,024 tokens.</td>
+</tr>
+<tr>
+<td><strong>Working-tree pass (WT)</strong></td>
+<td>Primary metric</td>
+<td>Final working-tree state passes hidden tests at episode end, whether or not <code>submit_patch</code> was called. Matches host grading when an explicit submit is absent.</td>
+</tr>
+<tr>
+<td><strong>Strict pass</strong></td>
+<td>Process metric</td>
+<td>Patch passes <strong>and</strong> the agent called <code>submit_patch</code> before budget exhaustion.</td>
+</tr>
+<tr>
+<td><strong>Virtual clock</strong></td>
+<td>Evaluation clock</td>
+<td>Deterministic host-budget simulator: decoding latency (<code>tokens / tok_per_sec</code>) plus tool wall time against a 420 s per-episode cap.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="31-task-pool-and-split-discipline">3.1 Task pool and split discipline</h3>
+<p>We assembled a task pool from public benchmark tasks and mined merged pull requests from eleven Python repositories:</p>
+<p><code>fastapi</code>, <code>starlette</code>, <code>pydantic</code>, <code>rich</code>, <code>requests</code>, <code>httpx</code>, <code>click</code>, <code>flask</code>, <code>pytest</code>, <code>attrs</code>, and <code>urllib3</code>.</p>
+<p>Each mined task underwent two-sided soundness checks:</p>
+<ol>
+<li>the repository had to fail under the empty patch;</li>
+<li>it had to pass under the gold patch.</li>
+</ol>
+<p>The final experimental structure was:</p>
+<table>
+<thead>
+<tr>
+<th>Split</th>
+<th style="text-align: right;">Tasks</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>calib</code></td>
+<td style="text-align: right;">150</td>
+<td>model and scaffold comparisons</td>
+</tr>
+<tr>
+<td><code>test</code></td>
+<td style="text-align: right;">150</td>
+<td>sealed go/no-go evaluation</td>
+</tr>
+<tr>
+<td><code>train</code></td>
+<td style="text-align: right;">426</td>
+<td>trajectory generation and training</td>
+</tr>
+<tr>
+<td><code>holdout</code></td>
+<td style="text-align: right;">4</td>
+<td>reserve eval-only extras</td>
+</tr>
+</tbody>
+</table>
+<p>The calibration and test sets were stratified into:</p>
+<ul>
+<li><code>competition_public</code>: known public competition tasks;</li>
+<li><code>competition_new</code>: newly mined tasks from competition repositories;</li>
+<li><code>other</code>: tasks from the remaining repositories.</li>
+</ul>
+<p>The 150-task calibration split contained 23 <code>competition_public</code>, 35 <code>competition_new</code>, and 92 <code>other</code> tasks.</p>
+<h3 id="32-scoring">3.2 Scoring</h3>
+<p>We reported two verdicts:</p>
+<ol>
+<li><strong>Working-tree pass (WT):</strong> the final working-tree patch passed the grader, whether or not the agent explicitly called <code>submit_patch</code>.</li>
+<li><strong>Strict pass:</strong> the patch passed and the agent called <code>submit_patch</code>.</li>
+</ol>
+<p>WT was the primary metric because the host grader uses the working-tree diff when an explicit submission is absent. Strict pass remained useful as an operational metric.</p>
+<h3 id="33-virtual-clock">3.3 Virtual clock</h3>
+<p>The host budget was modeled with a virtual clock:</p>
+<ul>
+<li>14.0 tokens/s for the unadapted 31B model;</li>
+<li>13.006 tokens/s for the rank-8 adapter;</li>
+<li>420 seconds per episode;</li>
+<li>28 tool calls;</li>
+<li>80 turns;</li>
+<li>tool wall time added to generation time.</li>
+</ul>
+<p>This made comparisons independent of GPU batch speed while preserving the host's effective generation budget.</p>
+<h3 id="34-controlled-variables">3.4 Controlled variables</h3>
+<p>Phase 1 compared three known configurations:</p>
+<table>
+<thead>
+<tr>
+<th>Arm</th>
+<th>Description</th>
+<th style="text-align: right;">Prior Kaggle score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D69</td>
+<td>stable 31B reference</td>
+<td style="text-align: right;">0.18</td>
+</tr>
+<tr>
+<td>tr20</td>
+<td>ForgeSWE SurgicalTune lineage</td>
+<td style="text-align: right;">0.17</td>
+</tr>
+<tr>
+<td>scale10</td>
+<td>lower served adapter scale</td>
+<td style="text-align: right;">0.13</td>
+</tr>
+</tbody>
+</table>
+<p>Each arm ran two seeds on all 150 calibration tasks:</p>
+<p><code>3 arms × 2 seeds × 150 tasks = 900 episodes</code>.</p>
+<p>The protocol used paired bootstrap intervals over tasks and changed one experimental variable at a time.</p>
+<hr>
+<h2 id="4-phase-1-known-leaderboard-differences-disappeared-offline">4. Phase 1: known leaderboard differences disappeared offline</h2>
+<p>Phase 1 completed all 900 planned episodes.</p>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th style="text-align: right;">Episodes</th>
+<th style="text-align: right;">WT pass</th>
+<th style="text-align: right;">Strict pass</th>
+<th style="text-align: right;">Mean virtual time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D69</td>
+<td style="text-align: right;">300</td>
+<td style="text-align: right;">93/300 = 31.0%</td>
+<td style="text-align: right;">58/300 = 19.3%</td>
+<td style="text-align: right;">399.5 s</td>
+</tr>
+<tr>
+<td>tr20, seed 0</td>
+<td style="text-align: right;">150</td>
+<td style="text-align: right;">47/150 = 31.3%</td>
+<td style="text-align: right;">27/150 = 18.0%</td>
+<td style="text-align: right;">402.0 s</td>
+</tr>
+<tr>
+<td>tr20, seed 1</td>
+<td style="text-align: right;">150</td>
+<td style="text-align: right;">48/150 = 32.0%</td>
+<td style="text-align: right;">22/150 = 14.7%</td>
+<td style="text-align: right;">405.3 s</td>
+</tr>
+<tr>
+<td>scale10</td>
+<td style="text-align: right;">300</td>
+<td style="text-align: right;">91/300 = 30.3%</td>
+<td style="text-align: right;">47/300 = 15.7%</td>
+<td style="text-align: right;">412.0 s</td>
+</tr>
+</tbody>
+</table>
+<p>Every paired WT comparison included zero:</p>
+<ul>
+<li>tr20 seed 1 minus D69: +1.0 percentage point, 95% CI [−4.7, +6.7];</li>
+<li>tr20 pooled minus D69: +0.7 points, 95% CI [−3.3, +4.7];</li>
+<li>scale10 minus D69: −0.7 points, 95% CI [−4.7, +3.3].</li>
+</ul>
+<p>This was the first major result: the local instrument did not reproduce the leaderboard ordering. D69 scored 0.18 on Kaggle, tr20 scored 0.17, and scale10 scored 0.13, yet all three were effectively tied on the 150-task calibration set.</p>
+<p>There are two possible interpretations:</p>
+<ol>
+<li>the calibration distribution differed from Kaggle's hidden distribution;</li>
+<li>the public leaderboard differences were partly sampling variance.</li>
+</ol>
+<p>The data do not identify which explanation dominates. What they do show is that a small offline advantage could not justify a new submission.</p>
+<hr>
+<h2 id="5-sampling-headroom-was-real-but-not-deployable">5. Sampling headroom was real but not deployable</h2>
+<p>Across the six Phase 1 rollouts per task, an oracle that selected any passing rollout solved:</p>
+<ul>
+<li>66/150 tasks by WT = 44.0%;</li>
+<li>49/150 tasks by strict scoring = 32.7%.</li>
+</ul>
+<p>The typical single run solved 45–48 tasks, or about 31%. Thus pass@6 exposed roughly 13 percentage points of stochastic headroom.</p>
+<p>The 150 tasks divided into:</p>
+<ul>
+<li>25 tasks solved in all six rollouts;</li>
+<li>41 mixed tasks solved in some but not all rollouts;</li>
+<li>84 tasks never solved.</li>
+</ul>
+<p>The mixed tasks were the most informative. Comparing passing and failing rollouts on the same task:</p>
+<ul>
+<li>passing runs edited about 59 virtual seconds earlier;</li>
+<li>passing runs used about 91 fewer completion tokens per turn;</li>
+<li>their largest turn was about 620 tokens shorter;</li>
+<li>they completed about three more turns;</li>
+<li>37/129 passing rollouts had a turn over 1,500 tokens, versus 71/117 failing rollouts.</li>
+</ul>
+<p>The pattern was not "successful runs think more." Successful runs distributed work across more, shorter steps and edited earlier.</p>
+<p>However, the competition format did not permit an unconstrained best-of-N policy. Any deployable multi-attempt scheme had to remain within the shared 12-hour wall and select a patch without access to the hidden oracle. The measured pass@6 result was therefore a capability ceiling, not a shippable gain.</p>
+<hr>
+<h2 id="6-failure-anatomy-localization-was-not-the-dominant-bottleneck">6. Failure anatomy: localization was not the dominant bottleneck</h2>
+<p>The tr20 seed-1 run contained 74 failing clock-timeout episodes:</p>
+<ul>
+<li>52 <code>timeout_empty_diff</code>;</li>
+<li>22 failing <code>timeout_unsubmitted_with_diff</code>.</li>
+</ul>
+<p>The 52 empty-diff timeouts looked like localization failures, but tool traces showed otherwise:</p>
+<ul>
+<li>47/52 had already called <code>read_file</code> on a gold file;</li>
+<li>48/52 had opened a gold file through either <code>read_file</code> or shell;</li>
+<li>33/52 opened every gold file;</li>
+<li>46/52 never attempted an edit;</li>
+<li>six attempted edits, and five of those attempts all failed.</li>
+</ul>
+<p>The median fatal turn began with 67 seconds left, generated about 1,580 tokens, spent roughly 74% of those tokens in reasoning, and ended in a tool call that could not execute before the virtual clock expired.</p>
+<p>For the 22 timeout failures that did produce a diff:</p>
+<ul>
+<li>the first edit occurred at median turn 16;</li>
+<li>the first edit occurred around virtual second 351;</li>
+<li>19 edited a gold file;</li>
+<li>16 failed tests with return code 1;</li>
+<li>six encountered return code 2.</li>
+</ul>
+<p>This distinction mattered. The model often knew where to work, but it delayed action until there was too little budget left to edit, test, diagnose, and repair.</p>
+<h3 id="61-tool-wall-time-was-not-the-cause">6.1 Tool wall time was not the cause</h3>
+<p>Median tool wall time for the 74 timeout failures was only 0.33 seconds. Generation dominated the virtual clock. Raising tool speed would not have solved the problem.</p>
+<h3 id="62-scratch-files-were-not-the-cause">6.2 Scratch files were not the cause</h3>
+<p>Across all 1,200 Phase 1 and Phase 2 episodes:</p>
+<ul>
+<li>823 failed WT;</li>
+<li>19 failed episodes created an agent-specific untracked file;</li>
+<li>15 of those files contributed no source hunk after stripping;</li>
+<li>zero failures became a correct gold-equivalent patch after removing scratch files.</li>
+</ul>
+<p>The <code>git add -N .</code> behavior was worth auditing, but it explained none of the observed failures.</p>
+<hr>
+<h2 id="7-phase-2-submission-guards-improved-process-compliance-not-accuracy">7. Phase 2: submission guards improved process compliance, not accuracy</h2>
+<p>Phase 2 ran two variants of the tr20 winner:</p>
+<ul>
+<li><strong>P2_A:</strong> clock-aware submit notices at 330 and 375 seconds;</li>
+<li><strong>P2_B:</strong> P2_A plus a pre-submit test gate.</li>
+</ul>
+<p>Each variant ran once on all 150 calibration tasks, adding 300 episodes.</p>
+<table>
+<thead>
+<tr>
+<th>Arm</th>
+<th style="text-align: right;">WT pass</th>
+<th style="text-align: right;">Strict pass</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1 tr20 seed 1</td>
+<td style="text-align: right;">48/150 = 32.0%</td>
+<td style="text-align: right;">22/150 = 14.7%</td>
+</tr>
+<tr>
+<td>P2_A</td>
+<td style="text-align: right;">50/150 = 33.3%</td>
+<td style="text-align: right;">35/150 = 23.3%</td>
+</tr>
+<tr>
+<td>P2_B</td>
+<td style="text-align: right;">48/150 = 32.0%</td>
+<td style="text-align: right;">31/150 = 20.7%</td>
+</tr>
+</tbody>
+</table>
+<p>P2_A improved strict pass over the paired Phase 1 baseline by 8.7 points, with a 95% interval excluding zero. Yet WT remained statistically flat.</p>
+<p>The guard caused agents to submit patches that were already present in the working tree. It improved protocol compliance but did not improve the patches.</p>
+<p>This is an important evaluation lesson: a proxy metric can move substantially while the actual objective remains unchanged.</p>
+<p><img alt="Figure 1: Process Ceremony vs. True Repair Accuracy" src="figures/fig1_wt_vs_strict.jpg"></p>
+<p><em>Figure 1: Working-tree pass rate (blue, graded by the host via <code>git diff</code>) versus strict submission rate (orange, explicit <code>submit_patch</code> calls) across all six evaluated configurations on the 150-task calibration split. While process-level interventions (<code>P2_A</code> clock notices and the <code>1,024</code>-token thinking cap) shift strict submission compliance by up to +8.6 percentage points, true repair accuracy remains locked inside the 30.3%–33.3% band. Only the non-deployable <code>pass@6</code> oracle (44.0%) separates from the baseline.</em></p>
+<hr>
+<h2 id="8-thinking-budget-intervention-a-successful-behavioral-manipulation-with-zero-accuracy-gain">8. Thinking-budget intervention: a successful behavioral manipulation with zero accuracy gain</h2>
+<p>The timeout analysis suggested a direct intervention. The serving configuration allowed up to 4,096 reasoning tokens in one turn. In the 52 empty-diff timeout episodes, a simulation predicted that clipping the fatal turn to:</p>
+<ul>
+<li>2,048 tokens would let 9 turns finish;</li>
+<li>1,536 tokens would let 18 turns finish;</li>
+<li>1,024 tokens would let 32 turns finish;</li>
+<li>768 tokens would let 38 turns finish.</li>
+</ul>
+<p>This was only an upper bound. Finishing a tool call is not equivalent to producing a correct patch, and shorter thoughts could damage successful runs. In the Phase 1 bank, 62/279 passing episodes contained a thought longer than 1,024 tokens.</p>
+<p>We therefore ran a full paired experiment rather than testing only the failures:</p>
+<ul>
+<li>same tr20 adapter;</li>
+<li>same temperature 0.2;</li>
+<li>same seed 1;</li>
+<li>same 150 calibration tasks;</li>
+<li>only <code>thinking_budget</code> changed, from 4,096 to 1,024.</li>
+</ul>
+<h3 id="81-final-result">8.1 Final result</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th style="text-align: right;">1,024-token cap</th>
+<th style="text-align: right;">4,096-token baseline</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WT pass</td>
+<td style="text-align: right;">48/150 = 32.0%</td>
+<td style="text-align: right;">48/150 = 32.0%</td>
+</tr>
+<tr>
+<td>Strict pass</td>
+<td style="text-align: right;">28/150 = 18.7%</td>
+<td style="text-align: right;">22/150 = 14.7%</td>
+</tr>
+<tr>
+<td>Pairwise flips</td>
+<td style="text-align: right;">9 wins</td>
+<td style="text-align: right;">9 wins</td>
+</tr>
+<tr>
+<td>Paired WT delta</td>
+<td style="text-align: right;">0.0 points</td>
+<td style="text-align: right;">—</td>
+</tr>
+<tr>
+<td>95% CI</td>
+<td style="text-align: right;">[−6.0, +5.3] points</td>
+<td style="text-align: right;">—</td>
+</tr>
+<tr>
+<td>Time-budget endings</td>
+<td style="text-align: right;">77</td>
+<td style="text-align: right;">85</td>
+</tr>
+<tr>
+<td>Submitted endings</td>
+<td style="text-align: right;">45</td>
+<td style="text-align: right;">34</td>
+</tr>
+<tr>
+<td>Episodes with estimated thought &gt;1,024</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">63</td>
+</tr>
+</tbody>
+</table>
+<p>The intervention worked exactly as a behavioral control:</p>
+<ul>
+<li>long thoughts nearly disappeared;</li>
+<li>time-budget endings fell;</li>
+<li>explicit submissions increased;</li>
+<li>strict pass improved.</li>
+</ul>
+<p><img alt="Figure 2: Anatomy of the 420-Second Fatal Turn and the 9-for-9 Cap Trade-off" src="figures/fig2_fatal_turn_timeline.jpg"></p>
+<p><em>Figure 2: Timeline anatomy of the 420-second virtual clock across the 150 calibration tasks. Passing rollouts on mixed tasks edit ~59s earlier using shorter reasoning turns (Track 1). In 47 of 52 uncapped empty-diff timeouts, the agent already read the gold file but delayed editing until ~353s, launching a ~1,580-token thought block that expired the clock before <code>edit_file</code> could execute (Track 2). Capping thoughts at 1,024 tokens (Track 3) rescues +9 timeout tasks but induces −9 regressions on tasks requiring deep continuous reasoning, yielding a net accuracy delta of 0 tasks (48/150 vs. 48/150).</em></p>
+<p>But WT accuracy did not move by one task.</p>
+<p>The result rules out a simple story in which long reasoning bursts were the principal obstacle. They were a visible symptom of failure, but suppressing them did not create missing repair capability.</p>
+<h3 id="82-stratum-results">8.2 Stratum results</h3>
+<table>
+<thead>
+<tr>
+<th>Stratum</th>
+<th style="text-align: right;">1,024 cap</th>
+<th style="text-align: right;">Baseline tr20</th>
+<th style="text-align: right;">D69 mean</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>competition_new</code></td>
+<td style="text-align: right;">14/35</td>
+<td style="text-align: right;">11/35</td>
+<td style="text-align: right;">10.0/35</td>
+</tr>
+<tr>
+<td><code>competition_public</code></td>
+<td style="text-align: right;">7/23</td>
+<td style="text-align: right;">7/23</td>
+<td style="text-align: right;">8.0/23</td>
+</tr>
+<tr>
+<td><code>other</code></td>
+<td style="text-align: right;">27/92</td>
+<td style="text-align: right;">30/92</td>
+<td style="text-align: right;">28.5/92</td>
+</tr>
+</tbody>
+</table>
+<p>The capped arm gained three tasks in <code>competition_new</code> and lost three in <code>other</code>. This is redistribution, not a general improvement.</p>
+<hr>
+<h2 id="9-training-data-much-smaller-than-the-raw-pass-count-suggested">9. Training data: much smaller than the raw pass count suggested</h2>
+<p>The 900 Phase 1 episodes produced 279 passing trajectories. The 300 Phase 2 episodes added 98 passes. A raw count of 377 looks substantial, but it overstates useful training diversity:</p>
+<ul>
+<li>150 Phase 1 passes came from 25 tasks solved in all six rollouts;</li>
+<li>the 279 Phase 1 passes covered only 66 tasks;</li>
+<li>after excluding eval-only competition-mined tasks, 216 passes remained across 50 tasks;</li>
+<li>capping repeated trajectories at two per task left 90 rows across 50 tasks;</li>
+<li>62 Phase 2 passes contained harness notices not present in production.</li>
+</ul>
+<p>The final SFT builder used:</p>
+<ul>
+<li>102 training rows on 40 tasks;</li>
+<li>10 task-level development rows;</li>
+<li>eight <code>competition_new</code> rows for evaluation only;</li>
+<li>maximum sequence length 24,576;</li>
+<li>attention-locked MLP continuation from the tr20 ForgeSWE lineage.</li>
+</ul>
+<p>This was far below the plan's target of at least 1,000 verified rows. The experiment could test training plumbing, but it could not support a strong claim about scalable self-distillation.</p>
+<p><img alt="Figure 3: Public Leaderboard Selection Bias and On-Policy Training Funnel" src="figures/fig3_lb_and_funnel.jpg"></p>
+<p><em>Figure 3: (Left) Median submission count per team across score brackets on the 58-task public leaderboard (n = 5,940 teams), illustrating best-of-N selection pressure under stochastic sampling (σ ≈ 1.4 tasks). (Right) The on-policy trajectory funnel from 900 Phase 1 calibration episodes: 279 raw passing trajectories collapse to 90 usable SFT rows across 50 unique tasks after removing 150 repeated solves on 25 always-solved tasks and holding out evaluation strata—an order of magnitude below the 1,000+ unique rows needed for reliable 31B self-distillation.</em></p>
+<hr>
+<h2 id="10-training-attempt-and-infrastructure-outcome">10. Training attempt and infrastructure outcome</h2>
+<p>The training arm ran on an H100 NVL:</p>
+<ul>
+<li>25 planned optimizer steps;</li>
+<li>gradient accumulation 4;</li>
+<li>learning rate 1e-4;</li>
+<li>checkpoints at steps 12 and 25;</li>
+<li>38.7 million trainable adapter parameters;</li>
+<li>attention LoRA tensors frozen;</li>
+<li>MLP LoRA tensors trainable.</li>
+</ul>
+<p>Step-0 validation loss was:</p>
+<ul>
+<li>0.0985 token-weighted on the development rows;</li>
+<li>0.0740 on the eval-only <code>competition_new</code> rows.</li>
+</ul>
+<p>The first four training losses were:</p>
+<p><code>0.057 → 0.099 → 0.057 → 0.172</code>.</p>
+<p>The volume-less training pod disappeared after step 4 and returned 404 from the provider. Only the untouched step-0 adapter and logs were synchronized. No step-12 or step-25 checkpoint existed, so no evaluation or weight-delta analysis was possible.</p>
+<p>This run provides no evidence for or against the training method. It does provide an operational lesson: expensive training on an ephemeral volume needs checkpoint synchronization at a cadence shorter than the provider-failure interval. Waiting until step 12 created an avoidable recovery gap.</p>
+<p>Per the operator lock, no replacement pod was created.</p>
+<hr>
+<h2 id="11-leaderboard-evidence">11. Leaderboard evidence</h2>
+<p>Our strongest main-track submissions were stable unadapted or minimally modified configurations:</p>
+<table>
+<thead>
+<tr>
+<th>Submission class</th>
+<th style="text-align: right;">Public score</th>
+<th style="text-align: right;">Implied tasks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stable unadapted / D69-class</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">11 / 58</td>
+</tr>
+<tr>
+<td>ForgeSWE tr20-class</td>
+<td style="text-align: right;">0.17</td>
+<td style="text-align: right;">10 / 58</td>
+</tr>
+<tr>
+<td>Lower-scale / spectral / graft packs</td>
+<td style="text-align: right;">≤ 0.13</td>
+<td style="text-align: right;">≤ 8 / 58</td>
+</tr>
+</tbody>
+</table>
+<p>The project repeatedly found that local panel gains did not transfer:</p>
+<ul>
+<li>d100 spectral scored 4/9 locally but only 0.13 on Kaggle;</li>
+<li>lower-scale and spectral variants remained near their parents in weight space yet lost several hidden tasks;</li>
+<li>prompt grafts reduced the leaderboard score by about 0.05;</li>
+<li>exact reproductions of public high-scoring packs did not reproduce their reported score in our account.</li>
+</ul>
+<p>The evidence does not imply that training cannot improve a 31B coding agent. It implies that our training scale, task diversity, and validation protocol did not demonstrate such an improvement.</p>
+<hr>
+<h2 id="12-small-model-track">12. Small-model track</h2>
+<p>The E4B track behaved differently:</p>
+<ul>
+<li>E4B decoded at roughly 43–51 tokens/s locally, versus about 13–14 tokens/s for the adapted 31B;</li>
+<li>failures in the 13-task E4B autopsy were predominantly syntax errors, wrong conditions, and missed companion edits rather than clock exhaustion;</li>
+<li>successive E4B submissions moved from 0.03 to 0.05 to 0.06, corresponding to two, three, and four public tasks.</li>
+</ul>
+<p>The best E4B submission therefore showed a real two-task improvement over the earliest E4B run. However:</p>
+<ul>
+<li>the last observed small-model leader was 0.10, or six public tasks;</li>
+<li>at least 12 teams were tied at that score in the last available small-board snapshot;</li>
+<li>the bonus was a single prize decided on private performance;</li>
+<li>the available 31B distillation set covered only about 40–50 useful tasks after filtering.</li>
+</ul>
+<p>One additional E4B distillation run was economically defensible, but its expected value was low. The operator chose to stop rather than spend further GPU budget.</p>
+<hr>
+<h2 id="13-operational-controls-and-cost">13. Operational controls and cost</h2>
+<p>The final campaign used (that is only the final campaign, in addition to several hundred dollars of earlier work):</p>
+<ul>
+<li>five A40 pods for evaluation;</li>
+<li>one H100 NVL for the interrupted training attempt;</li>
+<li>automatic result synchronization;</li>
+<li>pod-side deadline watchdogs;</li>
+<li>Mac-side spend enforcement;</li>
+<li>automatic termination after shard completion;</li>
+<li>immutable submission artifacts;</li>
+<li>no credentials copied to pods;</li>
+<li>no modification of the frozen agent scaffold.</li>
+</ul>
+<p>The final thinking-cap / training attempt run cost <strong>$6.56</strong> against a reduced <strong>$14</strong> hard cap:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th style="text-align: right;">Spend (USD)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Five A40 evaluation pods</td>
+<td style="text-align: right;">5.06</td>
+</tr>
+<tr>
+<td>H100 training (interrupted)</td>
+<td style="text-align: right;">1.50</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td style="text-align: right;"><strong>6.56</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The 900 Phase 1 and 300 Phase 2 episodes had previously cost $32.73. Thus the final 1,350-episode measurement campaign cost approximately $39.29, excluding earlier project work.</p>
+<p>An audit found that every evaluation pod had accidentally been marked <code>hold=true</code>, which would have prevented Mac-side stage-completion termination. The flag was corrected while runs were active. All five evaluation pods subsequently terminated automatically with reason <code>stage_done</code>.</p>
+<hr>
+<h2 id="14-what-worked">14. What worked</h2>
+<h3 id="141-measurement-infrastructure">14.1 Measurement infrastructure</h3>
+<p>The project replaced anecdotal panel results with:</p>
+<ul>
+<li>complete paired task coverage;</li>
+<li>bootstrap intervals;</li>
+<li>explicit strata;</li>
+<li>two scoring definitions;</li>
+<li>deterministic virtual-time accounting;</li>
+<li>full trajectory preservation;</li>
+<li>failure taxonomies;</li>
+<li>sealed test and holdout sets.</li>
+</ul>
+<p>This infrastructure produced stronger conclusions than another leaderboard submission would have.</p>
+<h3 id="142-behavior-level-interventions">14.2 Behavior-level interventions</h3>
+<p>Clock notices and a lower thinking budget reliably changed:</p>
+<ul>
+<li>submission frequency;</li>
+<li>reasoning length;</li>
+<li>timeout frequency;</li>
+<li>strict compliance.</li>
+</ul>
+<p>This demonstrates that agent behavior can be controlled even when underlying task accuracy remains fixed.</p>
+<h3 id="143-cost-and-safety-controls">14.3 Cost and safety controls</h3>
+<p>The final fleet respected the reduced spend cap, synchronized all completed evaluation outputs, terminated at zero burn, kept the test split sealed, and made no new submission.</p>
+<hr>
+<h2 id="15-what-did-not-work">15. What did not work</h2>
+<h3 id="151-small-panels-as-model-selectors">15.1 Small panels as model selectors</h3>
+<p>Panels of 9–13 tasks were useful smoke tests but unreliable optimization targets. Several panel winners regressed by three or more public tasks.</p>
+<h3 id="152-treating-process-metrics-as-capability-metrics">15.2 Treating process metrics as capability metrics</h3>
+<p>Strict submission rate improved sharply, but WT pass stayed flat. More compliant behavior did not imply better patches.</p>
+<h3 id="153-assuming-clock-symptoms-were-causal">15.3 Assuming clock symptoms were causal</h3>
+<p>Long thoughts were associated with failure. Removing them did not improve accuracy. Correlation correctly identified a failure pattern but not a sufficient intervention.</p>
+<h3 id="154-weak-training-volume">15.4 Weak training volume</h3>
+<p>Approximately 100 diverse rows are enough to test a trainer, not enough to establish a new coding capability in a 31B model. Repeated passes on the same easy tasks inflated the apparent bank size.</p>
+<h3 id="155-leaderboard-hill-climbing">15.5 Leaderboard hill-climbing</h3>
+<p>The public board had coarse one-task steps, stochastic sampling, and distribution shift. Submitting local winners without a strong paired gate repeatedly spent daily slots without increasing the floor.</p>
+<hr>
+<h2 id="16-decision">16. Decision</h2>
+<p>The campaign stopped for three evidence-based reasons:</p>
+<ol>
+<li><strong>No demonstrated main-track lever.</strong> D69, tr20, scale10, Phase 2 guards, and the thinking cap were statistically tied by WT.</li>
+<li><strong>Capability ceiling on the available pool.</strong> Eighty-four of 150 calibration tasks were never solved in the six-rollout Phase 1 oracle, and the thinking-cap run added only one newly solved task.</li>
+<li><strong>Prize distance.</strong> The stable main-track score represented 11 public tasks; the leader solved 17. Nothing measured suggested a credible six-task improvement.</li>
+</ol>
+<p>The retained final candidates were:</p>
+<ul>
+<li>a stable 0.18 31B submission;</li>
+<li>the 0.06 E4B submission.</li>
+</ul>
+<p>No sealed-test G3 evaluation was run, the 150-task test split remained sealed, and no new Kaggle submission was made after the stop decision.</p>
+<hr>
+<h2 id="17-general-lessons-for-coding-agent-research">17. General lessons for coding-agent research</h2>
+<h3 id="lesson-1-evaluate-patches-not-ceremony">Lesson 1: Evaluate patches, not ceremony</h3>
+<p>Explicit submission, clean termination, and test invocation are useful operational metrics. The primary metric must still be whether the final repository state passes.</p>
+<h3 id="lesson-2-pair-by-task">Lesson 2: Pair by task</h3>
+<p>Independent aggregate pass rates waste information. Running configurations on identical tasks and bootstrapping task-level differences makes small experiments substantially more interpretable.</p>
+<h3 id="lesson-3-separate-localization-execution-and-repair">Lesson 3: Separate localization, execution, and repair</h3>
+<p>"No final diff" does not mean "failed to find the file." Tool traces showed that many empty-patch failures had already localized correctly. The failure occurred between understanding and action.</p>
+<h3 id="lesson-4-intervene-on-all-tasks-not-only-failures">Lesson 4: Intervene on all tasks, not only failures</h3>
+<p>Testing a shorter thinking budget only on previous timeouts would have created selection bias and hidden regressions on successful tasks. The full 150-task paired run showed the net effect was zero.</p>
+<h3 id="lesson-5-count-unique-tasks-not-trajectories">Lesson 5: Count unique tasks, not trajectories</h3>
+<p>Repeated solutions of easy tasks make a trajectory bank look large. Diversity at the task and failure-mode level is more important than raw row count.</p>
+<h3 id="lesson-6-a-behavioral-change-is-not-a-capability-change">Lesson 6: A behavioral change is not a capability change</h3>
+<p>The thinking cap is a clean example: it altered reasoning length, endings, and submission behavior while leaving solved-task count unchanged.</p>
+<h3 id="lesson-7-infrastructure-failures-are-part-of-experimental-design">Lesson 7: Infrastructure failures are part of experimental design</h3>
+<p>Checkpoint cadence, immutable artifacts, spend caps, and automatic termination are not secondary operations work. They determine whether an experiment produces usable evidence.</p>
+<h3 id="lesson-8-stopping-is-a-scientific-outcome">Lesson 8: Stopping is a scientific outcome</h3>
+<p>Once all measured interventions were flat and the remaining plan required an order-of-magnitude increase in data, stopping preserved budget and prevented further overfitting to a noisy public board.</p>
+<hr>
+<h2 id="18-limitations">18. Limitations</h2>
+<ol>
+<li>The calibration distribution did not reproduce the Kaggle ordering among D69, tr20, and scale10.</li>
+<li>The sealed 150-task test split was never opened, by design.</li>
+<li>The public leaderboard task count is inferred from the observed score lattice; it is not an official disclosed count.</li>
+<li>The private evaluation distribution and task count were not observable.</li>
+<li>Phase 2 clock notices were harness-only behavior and therefore not directly shippable.</li>
+<li>The thinking-budget comparison used one temperature and one seed.</li>
+<li>The ForgeSWE continuation training run did not reach a checkpoint beyond step 0.</li>
+<li>The small-model leaderboard snapshot was older than the final main-board snapshot.</li>
+<li>Local virtual time modeled host behavior but could not reproduce every host scheduling effect.</li>
+</ol>
+<p>These limitations narrow the claims. The report establishes what the measured interventions did on the calibration instrument; it does not establish a universal ceiling for Gemma 4 coding agents.</p>
+<hr>
+<h2 id="19-reproducibility-map">19. Reproducibility map</h2>
+<p><strong>Public research repository:</strong><br>
+<a href="https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition">Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition</a></p>
+<table>
+<thead>
+<tr>
+<th>Artifact</th>
+<th>Path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Compact evidence (1,350 episodes)</td>
+<td><code>evidence/phase{1,2,3}_*.jsonl</code></td>
+</tr>
+<tr>
+<td>Evidence schema</td>
+<td><code>evidence/SCHEMA.md</code></td>
+</tr>
+<tr>
+<td>Task / split manifest (730 tasks)</td>
+<td><code>benchmark/tasks_manifest.jsonl</code></td>
+</tr>
+<tr>
+<td>Virtual-clock protocol</td>
+<td><code>benchmark/PROTOCOL.md</code></td>
+</tr>
+<tr>
+<td>One-command table reproduction</td>
+<td><code>scripts/reproduce_all_tables.py</code></td>
+</tr>
+<tr>
+<td>Figures 1–3 + hero art</td>
+<td><code>docs/figures/</code></td>
+</tr>
+<tr>
+<td>Stripped baseline config shape</td>
+<td><code>configs/baseline_d69/</code></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Experiment</th>
+<th style="text-align: right;">Episodes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1 calibration</td>
+<td style="text-align: right;">900</td>
+</tr>
+<tr>
+<td>Phase 2 guards</td>
+<td style="text-align: right;">300</td>
+</tr>
+<tr>
+<td>Phase 3 thinking cap</td>
+<td style="text-align: right;">150</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td style="text-align: right;"><strong>1,350</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="20-suggested-article-framing">20. Suggested article framing</h2>
+<p><strong>Proposed title:</strong> When Better Agent Behavior Does Not Improve Accuracy: An Evidence-First Study of Autonomous Code Repair</p>
+<p><strong>One-sentence thesis:</strong> In autonomous software repair, shorter reasoning, earlier submission, and fewer timeouts can make an agent look operationally better without increasing the number of tasks it solves.</p>
+<p><strong>Recommended emphasis:</strong></p>
+<ol>
+<li>the transition from noisy leaderboard iteration to paired task-level evaluation;</li>
+<li>the difference between localization and execution failures;</li>
+<li>the thinking-budget intervention as a clean negative result;</li>
+<li>the need to count unique training tasks rather than trajectories;</li>
+<li>the value of stopping rules in expensive agent research.</li>
+</ol>
+<p><strong>Claims to avoid:</strong></p>
+<ul>
+<li>that 1,024 reasoning tokens are always optimal;</li>
+<li>that reasoning is harmful in general;</li>
+<li>that ForgeSWE or adapter training cannot work at larger scale;</li>
+<li>that the public and private leaderboards share the same task distribution;</li>
+<li>that the 58-task public count was officially disclosed;</li>
+<li>that the interrupted training run tested the training hypothesis.</li>
+</ul>
+<hr>
+<h2 id="conclusion">Conclusion</h2>
+<p>The project began with a leaderboard question: how could an 0.18 coding agent reach 0.29? It ended with a more useful scientific answer. The agent's visible inefficiencies—long thoughts, late edits, missing submission calls, and clock deaths—were real, measurable, and controllable. But fixing them did not create the missing capability required to solve more tasks.</p>
+<p>The decisive experiment reduced the reasoning budget by 75%, cut long-thought episodes from 63 to three, reduced clock endings, and increased submissions. Accuracy remained exactly 48 of 150.</p>
+<p>That negative result is the central contribution. It demonstrates why coding-agent evaluation must distinguish operational behavior from task success, why paired task-level experiments matter, and why a disciplined stop decision can be more informative than another uncalibrated leaderboard submission.</p>
+    </article>
+  </main>
+</body>
+</html>
