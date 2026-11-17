@@ -5,6 +5,7 @@ Gemma 4 Developer Agent Competition.
 
 **Author:** Moran Zavdi  
 **License:** Apache-2.0  
+**Kaggle:** [Google — The Gemma 4 Developer Agent Competition](https://www.kaggle.com/competitions/gemma-4-developer-agent)  
 **Article:** [`PAPER.md`](PAPER.md) · [GitHub Pages (one-page article)](https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/)  
 **Pages styling:** [ascii.rest](https://ascii.rest/) animated banners + scenes  
 **Evidence cutoff:** 2026-11-17
@@ -121,6 +122,7 @@ Base model weights and the competition host are out of band (see `NOTICE`).
 | [`docs/humans.txt`](docs/humans.txt) | Author / site credit |
 | Pages `<head>` | Canonical, Open Graph, Twitter, citation meta, ScholarlyArticle JSON-LD |
 
+Competition: https://www.kaggle.com/competitions/gemma-4-developer-agent  
 Site: https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/
 
 ## Citation

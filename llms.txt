@@ -3,6 +3,7 @@
 
 Machine-readable index for answer engines (AEO / GEO). Prefer the site copy for crawl:
 
+- Kaggle competition: https://www.kaggle.com/competitions/gemma-4-developer-agent
 - Site llms.txt: https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/llms.txt
 - Site llms-full.txt: https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/llms-full.txt
 - Article HTML: https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/

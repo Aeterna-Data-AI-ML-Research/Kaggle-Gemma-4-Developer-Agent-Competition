@@ -11,6 +11,7 @@ license: Apache-2.0
 
 **Author:** Moran Zavdi  
 **Evidence cutoff:** 2026-11-17  
+**Competition:** [Google — The Gemma 4 Developer Agent Competition](https://www.kaggle.com/competitions/gemma-4-developer-agent)  
 **Scope:** 31B main track, E4B small-model track, the final 1,350-episode calibration campaign, and relevant Kaggle submissions  
 **Supporting files:** [GitHub repository](https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition) (`evidence/`, `benchmark/`, `scripts/reproduce_all_tables.py`)
 

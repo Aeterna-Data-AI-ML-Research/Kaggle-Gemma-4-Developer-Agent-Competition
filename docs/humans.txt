@@ -9,5 +9,9 @@ Standards: HTML5, Markdown, JSON-LD (Schema.org ScholarlyArticle)
 Components: ascii.rest (MIT) for decorative ASCII animations
 Last update: 2026-11-17
 
+/* COMPETITION */
+Kaggle: https://www.kaggle.com/competitions/gemma-4-developer-agent
+Title: Google — The Gemma 4 Developer Agent Competition
+
 /* THANKS */
 Kaggle Gemma 4 Developer Agent Competition host tooling and public Python OSS repos used as repair tasks.

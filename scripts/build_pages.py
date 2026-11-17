@@ -117,8 +117,18 @@ def main() -> int:
         ],
         "about": [
           {{"@type": "Thing", "name": "Autonomous software engineering agents"}},
-          {{"@type": "Thing", "name": "Gemma 4 Developer Agent Competition"}}
-        ]
+          {{
+            "@type": "Thing",
+            "name": "Google — The Gemma 4 Developer Agent Competition",
+            "url": "https://www.kaggle.com/competitions/gemma-4-developer-agent",
+            "sameAs": "https://www.kaggle.com/competitions/gemma-4-developer-agent"
+          }}
+        ],
+        "isPartOf": {{
+          "@type": "WebPage",
+          "name": "Google — The Gemma 4 Developer Agent Competition",
+          "url": "https://www.kaggle.com/competitions/gemma-4-developer-agent"
+        }}
       }},
       {{
         "@type": "WebSite",
@@ -342,6 +352,7 @@ def main() -> int:
 <body>
   <main class="wrap">
     <div class="topbar">
+      <a href="https://www.kaggle.com/competitions/gemma-4-developer-agent">Kaggle</a>
       <a href="https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition">GitHub</a>
       <a href="https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/">Pages</a>
       <a href="article.md">Markdown</a>

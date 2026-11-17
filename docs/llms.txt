@@ -4,6 +4,7 @@
 This file helps answer engines and LLM crawlers (AEO / GEO) find canonical sources.
 
 ## Primary sources
+- [Kaggle competition](https://www.kaggle.com/competitions/gemma-4-developer-agent): Google — The Gemma 4 Developer Agent Competition
 - [Article (HTML)](https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/): one-page rendered article
 - [Article (Markdown)](https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/article.md): full text
 - [GitHub repository](https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition): evidence packs, benchmark splits, reproduce script

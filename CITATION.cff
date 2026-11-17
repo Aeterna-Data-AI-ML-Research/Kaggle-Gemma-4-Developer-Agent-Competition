@@ -11,9 +11,17 @@ date-released: "2026-11-17"
 abstract: >-
   Compact evidence and reproducible tables from a 1,350-episode calibration
   campaign evaluating a Gemma 4 code-repair agent under a virtual clock.
+url: "https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition"
+repository-code: "https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition"
 keywords:
   - software engineering agents
   - evaluation
   - Gemma 4
   - SWE
   - virtual clock
+  - Kaggle
+references:
+  - type: software
+    title: "Google — The Gemma 4 Developer Agent Competition"
+    url: "https://www.kaggle.com/competitions/gemma-4-developer-agent"
+    notes: Hosted competition this study evaluates against.
