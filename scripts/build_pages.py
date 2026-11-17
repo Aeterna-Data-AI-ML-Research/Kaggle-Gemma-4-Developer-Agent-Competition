@@ -22,15 +22,20 @@ def main() -> int:
         if len(parts) >= 3:
             text = parts[2].lstrip("\n")
     text = text.replace("](docs/figures/", "](figures/")
-    # Keep the article H1 inside <article>; page chrome supplies the title block.
     body = markdown.markdown(
         text,
         extensions=["tables", "fenced_code", "toc", "nl2br", "sane_lists"],
         output_format="html5",
     )
-    # Avoid duplicate H1: drop PAPER.md's first heading from the article body.
+    # Banner owns the original PAPER headline + subtitle; strip duplicates from body.
     body = re.sub(
         r"<h1[^>]*>When Better Agent Behavior Does Not Improve Accuracy</h1>\s*",
+        "",
+        body,
+        count=1,
+    )
+    body = re.sub(
+        r"<h2[^>]*>An evidence-first retrospective on building and evaluating a code-repair agent for the Gemma 4 Developer Agent Competition</h2>\s*",
         "",
         body,
         count=1,
@@ -216,14 +221,6 @@ def main() -> int:
       margin: 0 0 2rem;
       padding: 1.75rem 0 0.25rem;
     }}
-    .hero .eyebrow {{
-      font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", system-ui, sans-serif;
-      font-size: 0.78rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin: 0 0 0.75rem;
-    }}
     .hero h1 {{
       font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", system-ui, sans-serif;
       font-size: clamp(1.85rem, 4vw, 2.45rem);
@@ -235,10 +232,11 @@ def main() -> int:
     }}
     .hero .lede {{
       margin: 0;
-      max-width: 38rem;
+      max-width: 40rem;
       color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.55;
+      font-size: 1.08rem;
+      line-height: 1.5;
+      font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", system-ui, sans-serif;
     }}
     .hero .meta {{
       margin: 1.1rem 0 0;
@@ -329,11 +327,10 @@ def main() -> int:
     </nav>
 
     <header class="hero">
-      <p class="eyebrow">Evidence-first Gemma 4 agent study</p>
       <h1>When Better Agent Behavior Does Not Improve Accuracy</h1>
       <p class="lede">
-        Shorter reasoning, earlier submission, and fewer timeouts can make an agent
-        look operationally better without increasing the number of tasks it solves.
+        An evidence-first retrospective on building and evaluating a code-repair agent
+        for the Gemma 4 Developer Agent Competition
       </p>
       <p class="meta">Moran Zavdi · 2026-11-17</p>
     </header>
