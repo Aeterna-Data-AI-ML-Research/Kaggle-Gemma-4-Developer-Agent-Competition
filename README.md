@@ -138,6 +138,12 @@ Base model weights and the competition host are out of band (see `NOTICE`).
 Competition: https://www.kaggle.com/competitions/gemma-4-developer-agent  
 Site: https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/
 
+## Contributing
+
+This repository is an evidence release for ML / DS researchers so it is closed and archived.
+
+Full article also can be found on Medium: https://medium.com/@when1go2market
+
 ## Citation
 
 See `CITATION.cff`.
