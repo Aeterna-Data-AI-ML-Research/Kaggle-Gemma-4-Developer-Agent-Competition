@@ -9,10 +9,9 @@ license: Apache-2.0
 
 ![Autonomous code-repair agent at the workbench](docs/figures/hero_agent_workbench.jpg)
 
-**Status:** publication-ready technical article draft  
 **Evidence cutoff:** 2026-11-17  
 **Scope:** 31B main track, E4B small-model track, the final 1,350-episode calibration campaign, and relevant Kaggle submissions  
-**Evidence cutoff note:** GPU fleet idle; no further cloud experiments after the stop decision.
+**Supporting files:** [GitHub repository](https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition) (`evidence/`, `benchmark/`, `scripts/reproduce_all_tables.py`)
 
 ---
 
@@ -26,18 +25,17 @@ First, three configurations with materially different Kaggle scores were statist
 
 The public leaderboard told the same story. Our stable unadapted 31B agent scored 0.18, while every trained or heavily modified configuration scored 0.17 or below. The final decision was therefore to stop GPU spending and retain the stable 0.18 submission. The broader lesson is that agentic software engineering requires evaluation at the task level, paired controls, and explicit separation of behavioral improvements from capability improvements.
 
-![Evidence-first study summary: virtual-clock funnel, paired bootstrap intervals, and pass-rate charts](docs/figures/hero_evidence_first_study.jpg)
-
-*Figure — Campaign summary. A 420 s virtual clock and paired bootstraps show that scaffold and thinking-budget changes can move behavior (strict submits, long thoughts) without moving working-tree accuracy; oracle pass@6 remains near 44%.*
+![Evidence-first study summary](docs/figures/hero_evidence_first_study.jpg)
 
 ---
 
 ## Reproducing the numbers
 
 ```bash
+git clone https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition.git
+cd Kaggle-Gemma-4-Developer-Agent-Competition
 pip install -r requirements.txt
 python scripts/reproduce_all_tables.py
-python scripts/plot_figures.py
 ```
 
 All tables in Sections 4–8 are pinned against `evidence/*.jsonl` (see `evidence/SCHEMA.md`).
@@ -53,7 +51,7 @@ The competition required a declarative Google ADK submission rather than an arbi
 - a global 12-hour generation budget;
 - a per-episode tool-call and time budget;
 - hidden Python repair tasks;
-- one competition submission per day;
+- one slow competition submission per day (probably the most difficult constraint);
 - up to two final selections;
 - final ranking on a private task set.
 
@@ -108,6 +106,23 @@ The project therefore moved from leaderboard-driven iteration to an evidence-fir
 
 ## 3. Evaluation design
 
+### Terminology and configuration glossary
+
+Throughout this study, we refer to experimental arms and harness concepts using the internal identifiers recorded in our benchmark manifests and reproducible evidence packs:
+
+| Identifier | Kind | Definition |
+| --- | --- | --- |
+| **D69** (Base-31B Reference) | Model arm | Unadapted `gemma-4-31b-it-qat-w4a16-ct` baseline with a 6-tool declarative contract (`read_file`, `edit_file`, `write_file`, `run_shell`, `grep_search`, `submit_patch`), `thinking_budget = 4096`, no LoRA adapter (14.0 tok/s). Public LB **0.18** (11/58). |
+| **ForgeSWE** (SurgicalTune) | Training method | Targeted PEFT recipe for 4-bit QAT models: freeze attention projections (`q/k/v/o_proj`) to preserve long-context localization; train rank-8 LoRA on MLP projections (`gate/up/down_proj`) over verified on-policy repair trajectories. |
+| **tr20** (Adapter-Scale-2.0) | Model arm | ForgeSWE rank-8 LoRA (`r = 8`) served with `lora_alpha = 16` (effective scale 2.0), temperature 0.2, and 4 domain skill declarations. ~7.1% Punica throughput tax (13.006 tok/s). Public LB **0.17** (10/58). |
+| **scale10** (Adapter-Scale-1.0) | Model arm | Same LoRA tensors as tr20, halved adapter scale (`lora_alpha = 8`, effective scale 1.0) and greedy decoding (`temperature = 0.0`). Public LB **0.13** (8/58). |
+| **P2_A** (Clock-Guard) | Harness arm | tr20 plus harness-injected virtual-clock warnings at 330 s and 375 s prompting finalize + `submit_patch` before the 420 s deadline. |
+| **P2_B** (Test-Gate) | Harness arm | P2_A plus a pre-submission gate that intercepts `submit_patch` once if pytest has not run since the last file modification. |
+| **Think-1024** (`a1_think1024`) | Serving arm | tr20 (seed 1, temperature 0.2) with vLLM per-turn `thinking_budget` reduced from 4,096 to 1,024 tokens. |
+| **Working-tree pass (WT)** | Primary metric | Final working-tree state passes hidden tests at episode end, whether or not `submit_patch` was called. Matches host grading when an explicit submit is absent. |
+| **Strict pass** | Process metric | Patch passes **and** the agent called `submit_patch` before budget exhaustion. |
+| **Virtual clock** | Evaluation clock | Deterministic host-budget simulator: decoding latency (`tokens / tok_per_sec`) plus tool wall time against a 420 s per-episode cap. |
+
 ### 3.1 Task pool and split discipline
 
 We assembled a task pool from public benchmark tasks and mined merged pull requests from eleven Python repositories:
@@ -116,8 +131,8 @@ We assembled a task pool from public benchmark tasks and mined merged pull reque
 
 Each mined task underwent two-sided soundness checks:
 
-- the repository had to fail under the empty patch;
-- it had to pass under the gold patch.
+1. the repository had to fail under the empty patch;
+2. it had to pass under the gold patch.
 
 The final experimental structure was:
 
@@ -126,7 +141,7 @@ The final experimental structure was:
 | `calib` | 150 | model and scaffold comparisons |
 | `test` | 150 | sealed go/no-go evaluation |
 | `train` | 426 | trajectory generation and training |
-| holdout | 31 | untouched |
+| `holdout` | 4 | reserve eval-only extras |
 
 The calibration and test sets were stratified into:
 
@@ -165,7 +180,7 @@ Phase 1 compared three known configurations:
 | Arm | Description | Prior Kaggle score |
 |---|---|---:|
 | D69 | stable 31B reference | 0.18 |
-| tr20 | ForgeSWE SurgicalTune / DAgger-Recover lineage | 0.17 |
+| tr20 | ForgeSWE SurgicalTune lineage | 0.17 |
 | scale10 | lower served adapter scale | 0.13 |
 
 Each arm ran two seeds on all 150 calibration tasks:
@@ -227,7 +242,7 @@ The mixed tasks were the most informative. Comparing passing and failing rollout
 - they completed about three more turns;
 - 37/129 passing rollouts had a turn over 1,500 tokens, versus 71/117 failing rollouts.
 
-The pattern was not “successful runs think more.” Successful runs distributed work across more, shorter steps and edited earlier.
+The pattern was not "successful runs think more." Successful runs distributed work across more, shorter steps and edited earlier.
 
 However, the competition format did not permit an unconstrained best-of-N policy. Any deployable multi-attempt scheme had to remain within the shared 12-hour wall and select a patch without access to the hidden oracle. The measured pass@6 result was therefore a capability ceiling, not a shippable gain.
 
@@ -336,16 +351,16 @@ We therefore ran a full paired experiment rather than testing only the failures:
 | Submitted endings | 45 | 34 |
 | Episodes with estimated thought >1,024 | 3 | 63 |
 
-![Figure 2: Anatomy of the 420-Second Fatal Turn and the 9-for-9 Cap Trade-off](docs/figures/fig2_fatal_turn_timeline.jpg)
-
-*Figure 2: Timeline anatomy of the 420-second virtual clock across the 150 calibration tasks. Passing rollouts on mixed tasks edit ~59s earlier using shorter reasoning turns (Track 1). In 47 of 52 uncapped empty-diff timeouts, the agent already read the gold file but delayed editing until ~353s, launching a ~1,580-token thought block that expired the clock before `edit_file` could execute (Track 2). Capping thoughts at 1,024 tokens (Track 3) rescues +9 timeout tasks but induces −9 regressions on tasks requiring deep continuous reasoning, yielding a net accuracy delta of 0 tasks (48/150 vs. 48/150).*
-
 The intervention worked exactly as a behavioral control:
 
 - long thoughts nearly disappeared;
 - time-budget endings fell;
 - explicit submissions increased;
 - strict pass improved.
+
+![Figure 2: Anatomy of the 420-Second Fatal Turn and the 9-for-9 Cap Trade-off](docs/figures/fig2_fatal_turn_timeline.jpg)
+
+*Figure 2: Timeline anatomy of the 420-second virtual clock across the 150 calibration tasks. Passing rollouts on mixed tasks edit ~59s earlier using shorter reasoning turns (Track 1). In 47 of 52 uncapped empty-diff timeouts, the agent already read the gold file but delayed editing until ~353s, launching a ~1,580-token thought block that expired the clock before `edit_file` could execute (Track 2). Capping thoughts at 1,024 tokens (Track 3) rescues +9 timeout tasks but induces −9 regressions on tasks requiring deep continuous reasoning, yielding a net accuracy delta of 0 tasks (48/150 vs. 48/150).*
 
 But WT accuracy did not move by one task.
 
@@ -395,7 +410,7 @@ The training arm ran on an H100 NVL:
 
 - 25 planned optimizer steps;
 - gradient accumulation 4;
-- learning rate `1e-4`;
+- learning rate 1e-4;
 - checkpoints at steps 12 and 25;
 - 38.7 million trainable adapter parameters;
 - attention LoRA tensors frozen;
@@ -424,13 +439,9 @@ Our strongest main-track submissions were stable unadapted or minimally modified
 
 | Submission class | Public score | Implied tasks |
 |---|---:|---:|
-| Stable base / D69 family | 0.18 | 11/58 |
-| Best ForgeSWE tr20 | 0.17 | 10/58 |
-| D70 GapDPO | 0.17 | 10/58 |
-| Scale10 ForgeSWE | 0.13 | 8/58 |
-| Spectral d100 ForgeSWE | 0.13 | 8/58 |
-| QR-SVD ForgeSWE | 0.13 | 8/58 |
-| Post-hoc adapter soup | 0.12 | 7/58 |
+| Stable unadapted / D69-class | 0.18 | 11 / 58 |
+| ForgeSWE tr20-class | 0.17 | 10 / 58 |
+| Lower-scale / spectral / graft packs | ≤ 0.13 | ≤ 8 / 58 |
 
 The project repeatedly found that local panel gains did not transfer:
 
@@ -464,7 +475,7 @@ One additional E4B distillation run was economically defensible, but its expecte
 
 ## 13. Operational controls and cost
 
-The final campaign used:
+The final campaign used (that is only the final campaign, in addition to several hundred dollars of earlier work):
 
 - five A40 pods for evaluation;
 - one H100 NVL for the interrupted training attempt;
@@ -476,17 +487,13 @@ The final campaign used:
 - no credentials copied to pods;
 - no modification of the frozen agent scaffold.
 
-The P7.53 run cost $6.56 against a reduced $14 hard cap:
+The final thinking-cap / training attempt run cost **$6.56** against a reduced **$14** hard cap:
 
-| Resource | Cost |
+| Component | Spend (USD) |
 |---|---:|
-| A40 pod 0 | $1.02 |
-| A40 pod 1 | $1.00 |
-| A40 pod 2 | $0.98 |
-| A40 pod 3 | $0.98 |
-| A40 pod 4 | $1.08 |
-| H100 NVL training pod | $1.50 |
-| **Total** | **$6.56** |
+| Five A40 evaluation pods | 5.06 |
+| H100 training (interrupted) | 1.50 |
+| **Total** | **6.56** |
 
 The 900 Phase 1 and 300 Phase 2 episodes had previously cost $32.73. Thus the final 1,350-episode measurement campaign cost approximately $39.29, excluding earlier project work.
 
@@ -565,7 +572,7 @@ The retained final candidates were:
 - a stable 0.18 31B submission;
 - the 0.06 E4B submission.
 
-No G3 evaluation was run, the 150-task test split remained sealed, and no new Kaggle submission was made.
+No sealed-test G3 evaluation was run, the 150-task test split remained sealed, and no new Kaggle submission was made after the stop decision.
 
 ---
 
@@ -581,7 +588,7 @@ Independent aggregate pass rates waste information. Running configurations on id
 
 ### Lesson 3: Separate localization, execution, and repair
 
-“No final diff” does not mean “failed to find the file.” Tool traces showed that many empty-patch failures had already localized correctly. The failure occurred between understanding and action.
+"No final diff" does not mean "failed to find the file." Tool traces showed that many empty-patch failures had already localized correctly. The failure occurred between understanding and action.
 
 ### Lesson 4: Intervene on all tasks, not only failures
 
@@ -623,34 +630,31 @@ These limitations narrow the claims. The report establishes what the measured in
 
 ## 19. Reproducibility map
 
-Primary artifacts:
+**Public research repository:**
+[Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition](https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Agent-Competition)
 
-- plan: `competitions/agent/plans/p749-plan-to-029.md`;
-- protocol: `gemma4-agent/configs/p750_phase1_protocol.md`;
-- Phase 1 report: `gemma4-agent/results/p752_phase2/P751_ANALYSIS_REPORT.md`;
-- Phase 1 JSON: `gemma4-agent/results/p752_phase2/P751_ANALYSIS_final.json`;
-- forensic report: `gemma4-agent/results/p752_phase2/P752_FORENSIC_TIMEOUTS_ORACLE.json`;
-- cap checks: `gemma4-agent/results/p752_phase2/P752_CRITIQUE_CHECKS.json`;
-- P7.53 pod report: `gemma4-agent/results/p753_thinkcap/analysis/P753_POD_RUN_REPORT.md`;
-- P7.53 machine-readable report: `gemma4-agent/results/p753_thinkcap/analysis/P753_POD_RUN_REPORT.json`;
-- experiment ledger: `docs/experiment_log.md`;
-- institutional findings: `docs/PROPRIETARY_PLAYBOOK.md`;
-- spectral failure report: `docs/P730_SUBMISSION_58284674_FAILURE_REPORT.md`.
+| Artifact | Path |
+| --- | --- |
+| Compact evidence (1,350 episodes) | `evidence/phase{1,2,3}_*.jsonl` |
+| Evidence schema | `evidence/SCHEMA.md` |
+| Task / split manifest (730 tasks) | `benchmark/tasks_manifest.jsonl` |
+| Virtual-clock protocol | `benchmark/PROTOCOL.md` |
+| One-command table reproduction | `scripts/reproduce_all_tables.py` |
+| Figures 1–3 + hero art | `docs/figures/` |
+| Stripped baseline config shape | `configs/baseline_d69/` |
 
-Experiment totals:
-
-| Stage | Episodes |
+| Experiment | Episodes |
 |---|---:|
 | Phase 1 calibration | 900 |
 | Phase 2 guards | 300 |
-| Thinking-budget comparison | 150 |
-| **Final campaign total** | **1,350** |
+| Phase 3 thinking cap | 150 |
+| **Total** | **1,350** |
 
 ---
 
 ## 20. Suggested article framing
 
-**Proposed title:** *When Better Agent Behavior Does Not Improve Accuracy: An Evidence-First Study of Autonomous Code Repair*
+**Proposed title:** When Better Agent Behavior Does Not Improve Accuracy: An Evidence-First Study of Autonomous Code Repair
 
 **One-sentence thesis:** In autonomous software repair, shorter reasoning, earlier submission, and fewer timeouts can make an agent look operationally better without increasing the number of tasks it solves.
 
