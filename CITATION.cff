@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+title: "When Better Agent Behavior Does Not Improve Accuracy"
+message: If you use this dataset or analysis, please cite it.
+type: dataset
+authors:
+  - family-names: Zavdi
+    given-names: Moran
+license: Apache-2.0
+version: 0.1.0
+date-released: "2026-11-17"
+abstract: >-
+  Compact evidence and reproducible tables from a 1,350-episode calibration
+  campaign evaluating a Gemma 4 code-repair agent under a virtual clock.
+keywords:
+  - software engineering agents
+  - evaluation
+  - Gemma 4
+  - SWE
+  - virtual clock

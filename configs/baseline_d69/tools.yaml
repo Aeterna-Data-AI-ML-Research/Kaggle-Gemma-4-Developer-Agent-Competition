@@ -1,0 +1,7 @@
+host_default:
+  - list_directory
+  - read_file
+  - search_file
+  - run_command
+  - edit_file
+  - submit_patch

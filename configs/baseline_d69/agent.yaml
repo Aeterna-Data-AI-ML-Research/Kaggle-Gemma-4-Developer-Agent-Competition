@@ -1,0 +1,8 @@
+# Reference declarative agent (D69-equivalent shape). Placeholders only.
+name: baseline_d69_reference
+model: gemma-4-31b-it-qat-w4a16-ct
+instruction: prompts.system
+tools:
+  - tools.host_default
+max_tool_calls: 28
+max_time_minutes: 7

@@ -1,0 +1,17 @@
+gemma4-swe-agent-study
+Copyright 2026 the authors
+
+This product is licensed under the Apache License, Version 2.0.
+See the LICENSE file for the full text.
+
+Third-party / out-of-band components (NOT redistributed in this repository):
+
+- Google Gemma 4 model weights and Kaggle competition host runtime
+  (see Kaggle / Google terms for the Gemma 4 Developer Agent Competition).
+- Google ADK and related wheels used by the competition harness.
+- Upstream Python repositories referenced by task IDs (fastapi, pydantic,
+  pytest, attrs, click, flask, httpx, requests, rich, starlette, urllib3, …)
+  remain under their own licenses; this release ships only task metadata
+  (repo, base_commit, gold file paths, suggested pytest command).
+
+Adapter weights and competition submission zips are intentionally omitted.
