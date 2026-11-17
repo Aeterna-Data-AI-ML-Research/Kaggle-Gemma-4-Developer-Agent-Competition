@@ -5,6 +5,7 @@ Gemma 4 Developer Agent Competition.
 
 **License:** Apache-2.0  
 **Article:** [`PAPER.md`](PAPER.md) · [GitHub Pages (one-page article)](https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/)  
+**Pages styling:** [ascii.rest](https://ascii.rest/) animated banners + scenes  
 **Evidence cutoff:** 2026-11-17
 
 <p align="center">
