@@ -6,7 +6,6 @@ Repo: https://github.com/Aeterna-Data-AI-ML-Research/Kaggle-Gemma-4-Developer-Ag
 
 /* SITE */
 Standards: HTML5, Markdown, JSON-LD (Schema.org ScholarlyArticle)
-Components: ascii.rest (MIT) for decorative ASCII animations
 Last update: 2026-11-17
 
 /* COMPETITION */

@@ -9,7 +9,6 @@ Gemma 4 Developer Agent Competition.
 **Article:** [`PAPER.md`](PAPER.md) · [GitHub Pages (one-page article)](https://aeterna-data-ai-ml-research.github.io/Kaggle-Gemma-4-Developer-Agent-Competition/)  
 **Notebooks:** [`notebooks/`](notebooks/) · [Reproduce](https://www.kaggle.com/code/moranzavdi/reproduce-gemma4-agent-behavior-study) · [Explore](https://www.kaggle.com/code/moranzavdi/explore-gemma4-agent-calibration)  
 **Dataset:** [moranzavdi/gemma4-agent-behavior-vs-accuracy](https://www.kaggle.com/datasets/moranzavdi/gemma4-agent-behavior-vs-accuracy)  
-**Pages styling:** [ascii.rest](https://ascii.rest/) animated banners + scenes  
 **Evidence cutoff:** 2026-11-17
 
 <p align="center">
